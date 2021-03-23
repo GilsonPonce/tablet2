@@ -22,23 +22,16 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <div class="row m-4">
-          {{informe}}
-        </div>
         <form @submit.prevent="enviarinforme">
-          <div class="row mb-3">
-            <label for="inputFecha" class="col-sm-2 col-form-label"
-              >Fecha:</label
-            >
-            <div class="col-sm-4">
-              <input
-                type="date"
-                class="form-control form-control-sm"
-                min="2021-01-01"
-                id="inputFecha"
-                v-model="informe.fecha"
-              />
+          <!-- PRESENTA ID DE INFORME GENERADO -->
+          <div class="row mb-3 justify-content-center" v-if="getgenerado && informe.id != ''">
+            <div class="col-sm-12">
+              <h5>No. {{informe.id}} </h5>
             </div>
+          </div>
+
+          <!-- PARAMETROS INICIALES DE INFORME -->
+          <div class="row mb-3 justify-content-center" v-if="!getgenerado">
             <label for="selectTurno" class="col-sm-2 col-form-label"
               >Turno:</label
             >
@@ -54,7 +47,7 @@
               </select>
             </div>
           </div>
-          <div class="row mb-3">
+          <div class="row mb-3" v-if="!getgenerado">
             <label for="selectLinea" class="col-sm-2 col-form-label"
               >Linea:</label
             >
@@ -124,10 +117,14 @@
             </div>
           
           </div>
-          <div class="row m-3 justify-content-center">
-            <button class="col-sm-4 btn btn-success" type="button" :disabled="bloquearBotonGenerarInforme">Generar Informe</button>
+
+          <!-- BOTON GENERAR -->
+          <div class="row m-3 justify-content-center" v-if="!getgenerado">
+            <button class="col-sm-4 btn btn-success" type="button" :disabled="bloquearBotonGenerarInforme" @click="generarInforme">Generar Informe</button>
           </div>
-          <div class="row mb-3">
+
+          <!-- REGISTRO DE PERSONAL -->
+          <div class="row mb-3" v-if="getgenerado">
             <label for="inputPersonal" class="col-sm-4 col-form-label"
               >Codigo personal:</label
             >
@@ -148,12 +145,12 @@
               +
             </button>
           </div>
-          <div class="row mb-3">
+          <div class="row mb-3" v-if="getgenerado">
             <h6 class="text-start">Personal agregado</h6>
             <div class="alert alert-secondary" role="alert">
               <ul
                 class="list-group"
-                v-for="(item, index) in informe.codigo_personal"
+                v-for="(item, index) in informe.registro"
                 v-bind:key="index"
               >
                 <li
@@ -174,7 +171,8 @@
             </div>
           </div>
 
-          <div class="row mb-3">
+          <!-- MATERIA PRIMA -->
+          <div class="row mb-3" v-if="getgenerado">
             <h4>Materia Prima</h4>
             <label for="selectLinea" class="col-sm-2 col-form-label"
               >Linea:</label
@@ -305,7 +303,7 @@
               +
             </button>
           </div>
-          <div class="row mb-3">
+          <div class="row mb-3" v-if="getgenerado">
             <h6 class="text-start">MP agregado</h6>
             <div class="alert alert-secondary" role="alert">
               <ul
@@ -344,7 +342,9 @@
               </ul>
             </div>
           </div>
-          <div class="row mb-3">
+
+          <!-- PRODUCTO TERMINADO -->
+          <div class="row mb-3" v-if="getgenerado">
             <h4>Producto Terminado</h4>
             <label for="selectColor" class="col-sm-2 col-form-label"
               >Peso:</label
@@ -366,7 +366,7 @@
               +
             </button>
           </div>
-          <div class="row mb-3">
+          <div class="row mb-3" v-if="getgenerado">
             <h6 class="text-start">PT Agregado</h6>
             <div class="alert alert-secondary" role="alert">
               <ul
@@ -403,7 +403,9 @@
               </ul>
             </div>
           </div>
-          <div class="row mb-3">
+
+          <!-- SCRAP -->
+          <div class="row mb-3" v-if="getgenerado">
             <h4>Scrap</h4>
             <label for="selectColor" class="col-sm-4 col-form-label"
               >Tipo de desperdicio:</label
@@ -452,7 +454,7 @@
               +
             </button>
           </div>
-          <div class="row mb-3">
+          <div class="row mb-3" v-if="getgenerado">
             <h6 class="text-start">Scrap agregado</h6>
             <div class="alert alert-secondary" role="alert">
               <ul
@@ -483,7 +485,9 @@
               </ul>
             </div>
           </div>
-          <div class="row mb-3">
+
+          <!-- CALCULOS -->
+          <div class="row mb-3" v-if="getgenerado">
             <p class="text-start">
               <strong>Total MP: </strong>{{ totalmateriaprima }} Kg<br />
               <strong>Total PT: </strong>{{ totalproductoterminado }} Kg<br />
@@ -497,7 +501,9 @@
               <strong>Saldo Material: </strong>{{ saldomaterial }} Kg<br />
             </p>
           </div>
-          <div class="row mb-3">
+
+          <!-- OBSERBACIONES -->
+          <div class="row mb-3" v-if="getgenerado">
             <div class="input-group">
               <span class="input-group-text">Observaciones</span>
               <textarea
@@ -507,12 +513,24 @@
               ></textarea>
             </div>
           </div>
+
+          <!-- BOTON DE CONFIRMACION DE COMPLETADO -->
           <button
             type="sumit"
             class="btn btn-primary mb-3"
             :disabled="bloquearbotonenviar"
+            v-if="getgenerado"
           >
-            Enviar
+            COMPLETADO
+          </button>
+<br>
+           <button
+            type="sumit"
+            class="btn btn-primary mb-3"
+            :disabled="bloquearbotonenviar"
+            v-if="getgenerado"
+          >
+            GENERAR UN NUEVO INFORME
           </button>
         </form>
       </div>
@@ -536,6 +554,7 @@ export default {
   setup() {
     const store = useStore();
     onMounted(() => {
+      informenesPendientes();
       store.dispatch("getPersonal");
       store.dispatch("getConfiguracion");
       store.dispatch("getColor");
@@ -568,7 +587,6 @@ export default {
     });
     const informe = ref({
       id:"",
-      fecha: "",
       turno: "",
       id_linea: "1",
       id_proceso: "1",
@@ -582,18 +600,48 @@ export default {
       scrap: [], //almacena objeto scrap
       registro: [] //almacena objeto personal
     });
+
+    const informenesPendientes = ()=>{
+
+      let informenes = JSON.parse(localStorage.getItem('InformenesPendientes'))
+
+      if(informenes != null || informenes != undefined){
+        if(informenes.items.length == 1){
+        store.state.generado = true
+        informenes.items.map((info)=>{
+          informe.value.id = info.id
+          informe.value.turno = info.turno
+          informe.value.saldo_anterior = info.saldo_anterior
+          informe.value.observacion = info.observacion
+          informe.value.completado = info.completado
+          informe.value.id_proceso = info.id_proceso
+          informe.value.id_material = info.id_material
+          informe.value.id_tipo_material = info.id_tipo_material
+        })
+      }
+      }
+    };
+
     const addpersonal = () => {
       if (codigopersonal.value != "") {
-        const idperson = store.state.personal.find(
+        //busca en la base de datos
+        const person = store.state.personal.find(
           (personal) => personal.id_personal == codigopersonal.value
         );
-        const idpersonexistente = informe.value.codigo_personal.find(
+
+        //busca en el array del objeto informe
+        const idpersonexistente = informe.value.registro.find(
           (person) => person.id_personal == codigopersonal.value
         );
 
         if (idpersonexistente == undefined || idpersonexistente == null) {
-          if (idperson != undefined || idperson != null) {
-            informe.value.codigo_personal.push(idperson);
+          if (person != undefined || person != null) {
+            informe.value.registro.push(person);
+            store.dispatch("getInforme");
+            let inforegistro = {
+              id_informe: informe
+            }
+            store.dispatch("postRegistro",person);
           } else {
             llamarwarningadvertencia();
           }
@@ -828,7 +876,7 @@ export default {
       if (
         informe.value.fecha == "" ||
         informe.value.turno == "" ||
-        informe.value.codigo_personal.length == 0 ||
+        informe.value.registro.length == 0 ||
         informe.value.linea == "" ||
         informe.value.proceso == "" ||
         informe.value.material == "" ||
@@ -858,12 +906,9 @@ export default {
     });
 
     const bloquearBotonGenerarInforme = computed(() => {
-      if (
-        informe.value.id_linea == "" ||
-        informe.value.id_proceso == "" ||
+      if (informe.value.id_proceso == "" ||
         informe.value.id_material == "" ||
         informe.value.id_tipo_material == "" ||
-        informe.value.fecha == "" ||
         informe.value.turno == ""
       ) {
         return true;
@@ -874,6 +919,10 @@ export default {
 
     const obtenerparte = computed(() => {
       return store.state.parte;
+    });
+
+    const getgenerado = computed(()=>{
+      return store.state.generado;
     });
 
     const nombreLinea = (id) => {
@@ -930,6 +979,49 @@ export default {
       envipersonal();
       enviscrap();
     };
+
+    const generarInforme = () => {
+      let informenesDelProceso = store.state.informe.filter(obj => obj.id_proceso == informe.value.id_proceso )
+      let idInformenes = []
+      informenesDelProceso.map((obj) => {
+        idInformenes.push(parseInt(obj.id))
+      })
+
+      let maxIdInforme = Math.max(...idInformenes)
+      if(maxIdInforme != null || maxIdInforme != undefined || maxIdInforme != ""){
+        if(maxIdInforme > 0){
+          maxIdInforme += 1
+        }else{
+          maxIdInforme = 1
+        }
+      }else{
+        maxIdInforme = 1
+      }
+
+      let informeAEnviar = {
+        "id" : maxIdInforme,
+        "turno" : informe.value.turno,
+        "saldo_anterior" : informe.value.saldo_anterior,
+        "observacion" : informe.value.observacion,
+        "completado" : 0,
+        "id_proceso" : informe.value.id_proceso,
+        "id_material" : informe.value.id_material,
+        "id_tipo_material" : informe.value.id_tipo_material
+      }
+
+      informe.value.id = maxIdInforme
+
+      store.dispatch("postInforme", informeAEnviar);
+
+      let data = {}
+      let items = []
+      items.push(informeAEnviar)
+      data.items = items
+      localStorage.setItem('InformenesPendientes',JSON.stringify(data))
+
+      store.state.generado = true
+    };
+
     const envinforme = () => {
       let info = {
         fecha: informe.value.fecha,
@@ -1091,6 +1183,7 @@ export default {
       llamarwarningproductoterminado,
       llamarwarningscrap,
       obtenerparte,
+      getgenerado,
       llamarwarningadvertencia,
       llamarwarningadvertenciaexiste,
       nombreTipoDesperdicio,
@@ -1101,6 +1194,8 @@ export default {
       enviproductoterminado,
       envipersonal,
       enviscrap,
+      generarInforme,
+      informenesPendientes,
     };
   },
 };

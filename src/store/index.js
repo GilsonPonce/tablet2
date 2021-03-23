@@ -37,7 +37,8 @@ export default createStore({
     tipoaviso: "aviso",
     estadoaviso: false,
     mensaje: "No hay mensaje",
-    loading: false
+    loading: false,
+    generado:false
   },
   mutations: {
     setPersonal: function (state, payload) {
@@ -85,6 +86,9 @@ export default createStore({
     setRegistro: function(state,payload){
       state.registro = payload
     },
+    setGenerado: function(state,payload){
+      state.generado = payload
+    },
     obtenerInforme: function(state){
       return state.informe
     },
@@ -99,9 +103,15 @@ export default createStore({
     },
     getRegistro: function(state){
       return state.registro
-    }
+    },
+    mensajeaviso: function(state,payload) {
+      state.presentaraviso = true;
+      state.mensaje = payload;
+      state.tipoaviso = "aviso";
+    },
   },
   actions: {
+    
     getLinea: async function ({ commit }) {
       commit('setLoading', true)
       try {
@@ -310,14 +320,14 @@ export default createStore({
     
       
         var formdata = new FormData();
-        formdata.append("fecha", objetoinforme.fecha);
+        formdata.append("id", objetoinforme.id);
         formdata.append("turno", objetoinforme.turno);
         formdata.append("saldo_anterior",objetoinforme.saldo_anterior);
         formdata.append("observacion", objetoinforme.observacion);
+        formdata.append("completado", objetoinforme.completado);
         formdata.append("id_proceso", objetoinforme.id_proceso);
         formdata.append("id_material", objetoinforme.id_material);
         formdata.append("id_tipo_material",objetoinforme.id_tipo_material);
-        formdata.append("id_color",objetoinforme.id_color);
 
         var requestOptions = {
           method: 'POST',
@@ -328,7 +338,7 @@ export default createStore({
 
         const res = await fetch("http://localhost:8080/informe", requestOptions)
         const data = await res.json()
-        commit('setInforme', data.detalle)
+        commit('mensajeaviso', data.detalle)
         commit('setLoading', false)
       } catch (error) {
         console.log(error)
@@ -437,7 +447,7 @@ export default createStore({
 
         const res = await fetch("http://localhost:8080/registro", requestOptions)
         const data = await res.json()
-        commit('setRegistro', data.detalle)
+        commit('mensajeaviso', data.detalle)
         commit('setLoading', false)
       } catch (error) {
         console.log(error)
