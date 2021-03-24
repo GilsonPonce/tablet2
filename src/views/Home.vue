@@ -170,7 +170,7 @@
                     <button
                       type="button"
                       class="btn btn-danger"
-                      @click="llamarwarningpersonal(index)"
+                      @click="llamarwarningpersonal(index, item.id_registro)"
                     >
                       -
                     </button></span
@@ -325,18 +325,18 @@
                 >
                   {{
                     nombreLinea(item.linea) +
-                      "   " +
-                      nombreProceso(item.proceso) +
-                      "   " +
-                      nombreMaterial(item.material) +
-                      "  " +
-                      nombreTipoMaterial(item.tipo_material) +
-                      "  " +
-                      nombrePropiedad(item.propiedad) +
-                      "  " +
-                      nombreColor(item.color) +
-                      "  " +
-                      item.peso
+                    "   " +
+                    nombreProceso(item.proceso) +
+                    "   " +
+                    nombreMaterial(item.material) +
+                    "  " +
+                    nombreTipoMaterial(item.tipo_material) +
+                    "  " +
+                    nombrePropiedad(item.propiedad) +
+                    "  " +
+                    nombreColor(item.color) +
+                    "  " +
+                    item.peso
                   }}
                   <span class="badge badge-primary badge-pill">
                     <button
@@ -388,16 +388,16 @@
                 >
                   {{
                     nombreLinea(informe.linea) +
-                      " " +
-                      nombreProceso(informe.proceso) +
-                      " " +
-                      nombreMaterial(informe.material) +
-                      "  " +
-                      nombreTipoMaterial(informe.tipo_material) +
-                      "  " +
-                      nombreColor(informe.color) +
-                      " " +
-                      item
+                    " " +
+                    nombreProceso(informe.proceso) +
+                    " " +
+                    nombreMaterial(informe.material) +
+                    "  " +
+                    nombreTipoMaterial(informe.tipo_material) +
+                    "  " +
+                    nombreColor(informe.color) +
+                    " " +
+                    item
                   }}
                   <span class="badge badge-primary badge-pill">
                     <button
@@ -476,10 +476,10 @@
                 >
                   {{
                     nombreTipoDesperdicio(item.tipo) +
-                      "-" +
-                      item.sacos +
-                      "-" +
-                      item.peso
+                    "-" +
+                    item.sacos +
+                    "-" +
+                    item.peso
                   }}
                   <span class="badge badge-primary badge-pill">
                     <button
@@ -549,7 +549,7 @@
 
 <script>
 // @ is an alias to /src
-import { computed, onMounted, ref } from "vue";
+import { computed, onBeforeUpdate, onMounted, onUpdated, ref } from "vue";
 import { useStore } from "vuex";
 import warning from "../components/warning.vue";
 import loading from "../components/Loading.vue";
@@ -562,20 +562,27 @@ export default {
   },
   setup() {
     const store = useStore();
-    onMounted(() => {
-      informenesPendientes();
-      store.dispatch("getPersonal");
-      store.dispatch("getConfiguracion");
-      store.dispatch("getColor");
-      store.dispatch("getTipoDesperdicio");
-      store.dispatch("getLinea");
-      store.dispatch("getProceso");
-      store.dispatch("getMaterial");
-      store.dispatch("getTipoMaterial");
-      store.dispatch("getInforme");
+
+    store.dispatch("getPersonal");
+    store.dispatch("getRegistro");
+    store.dispatch("getConfiguracion");
+    store.dispatch("getColor");
+    store.dispatch("getTipoDesperdicio");
+    store.dispatch("getLinea");
+    store.dispatch("getProceso");
+    store.dispatch("getMaterial");
+    store.dispatch("getTipoMaterial");
+    store.dispatch("getInforme");
+   
+
+    onBeforeUpdate(() => {
+      actualizarPersonal();
     });
+
     const codigopersonal = ref("");
     const materiaprima = ref({
+      id_materia_prima: "",
+      id_informe: "",
       id_linea: "1",
       id_proceso: "1",
       id_material: "",
@@ -585,16 +592,21 @@ export default {
       peso: "",
     });
     const productoterminado = ref({
+      id_producto_terminado: "",
+      id_informe: "",
       id_color: "",
       peso: "",
       tipo: "",
     });
     const scrap = ref({
+      id_scrap: "",
       motivo: "",
       sacos: "",
       peso: "",
+      id_informe: "",
     });
     const informe = ref({
+      id_informe: "",
       id: "",
       turno: "",
       id_linea: "1",
@@ -610,6 +622,7 @@ export default {
       registro: [], //almacena objeto personal
     });
 
+    //CARGA LA INFORMACION DEL INFORME PENDIENTE QUE ESTA EN LOCALSTORE
     const informenesPendientes = () => {
       let informenes = JSON.parse(localStorage.getItem("InformenesPendientes"));
 
@@ -617,6 +630,7 @@ export default {
         if (informenes.items.length == 1) {
           store.state.generado = true;
           informenes.items.map((info) => {
+            informe.value.id_informe = info.id_informe;
             informe.value.id = info.id;
             informe.value.turno = info.turno;
             informe.value.saldo_anterior = info.saldo_anterior;
@@ -629,7 +643,36 @@ export default {
         }
       }
     };
+    informenesPendientes();
+    
+    const actualizarPersonal = () => {
+      if (store.state.generado) {
+        informe.value.registro = [];
 
+        let registrosDeInforme = store.state.registro.filter((obj) => {
+          if (obj.id_informe == informe.value.id_informe && obj.activo == 1) {
+            return obj;
+          }
+        });
+
+        if (
+          registrosDeInforme != null ||
+          registrosDeInforme != undefined ||
+          registrosDeInforme != ""
+        ) {
+          registrosDeInforme.map(function (objinfo) {
+            let persona = store.state.personal.find(
+              (objper) => objper.id_personal == objinfo.id_personal
+            );
+            persona.id_registro = objinfo.id_registro;
+            informe.value.registro.push(persona);
+          });
+        }
+      }
+    };
+
+    //PERSONAL
+    //AGREGA Y RESGISTRA PERSONAL
     const addpersonal = () => {
       if (codigopersonal.value != "") {
         //busca en la base de datos
@@ -644,24 +687,14 @@ export default {
 
         if (idpersonexistente == undefined || idpersonexistente == null) {
           if (person != undefined || person != null) {
-            informe.value.registro.push(person);
-            store.dispatch("getInforme");
-            let informeBuscado = store.state.informe.found(
-              (obj) =>
-                obj.id == informe.value.id &&
-                obj.turno == informe.value.turno &&
-                obj.id_proceso == informe.value.id_proceso &&
-                obj.id_material == informe.value.id_material &&
-                obj.id_tipo_material == informe.value.id_tipo_material
-            );
-            if (informeBuscado != null || informeBuscado != undefined) {
-              let inforegistro = {
-                id_informe: informeBuscado.id_informe,
-                id_personal: person.id_personal,
-              };
-               store.dispatch("postRegistro",inforegistro);
-            }
-           
+            let idRegistro = generadorID("registro");
+            let inforegistro = {
+              id_registro: idRegistro,
+              id_informe: informe.value.id_informe,
+              id_personal: person.id_personal,
+            };
+            store.dispatch("postRegistro", inforegistro);
+            location.reload();
           } else {
             llamarwarningadvertencia();
           }
@@ -672,10 +705,19 @@ export default {
       }
     };
 
+    const lesspersonal = () => {
+      if (store.state.estadoaviso) {
+        store.dispatch("deleteRegistro", store.state.valor2);
+        location.reload();
+      }
+    };
+
+    //LOADING.........................................
     const presentarloading = computed(() => {
       return store.state.loading;
     });
 
+    //FUNCIONES QUE ACTIVAN LOS AVISOS
     const llamarwarningadvertencia = () => {
       store.state.presentaraviso = true;
       store.state.mensaje = "Personal no registrado";
@@ -688,13 +730,14 @@ export default {
       store.state.tipoaviso = "aviso";
     };
 
-    const llamarwarningpersonal = (valor) => {
+    const llamarwarningpersonal = (valor, valor2) => {
       if (store.state.presentaraviso === false) {
         store.state.presentaraviso = true;
         store.state.mensaje = "¿Seguro que deseas quitar?";
         store.state.tipoaviso = "sino";
         store.state.parte = "personal";
         store.state.valor = valor;
+        store.state.valor2 = valor2;
       }
     };
 
@@ -728,10 +771,46 @@ export default {
       }
     };
 
-    const lesspersonal = () => {
-      if (store.state.estadoaviso) {
-        informe.value.registro.splice(store.state.valor, 1);
+    //GENERADOR DE IDS
+    const generadorID = (tabla) => {
+      let ids = [];
+      if (tabla == "registro") {
+        store.dispatch("getRegistro");
+        store.state.registro.map((obj) => {
+          ids.push(parseInt(obj.id_registro));
+        });
+      } else if (tabla == "productoTerminado") {
+        store.dispatch("getProductoTerminado");
+        store.state.producto_terminado.map((obj) => {
+          ids.push(parseInt(obj.id_producto_terminado));
+        });
+      } else if (tabla == "materiaPrima") {
+        store.dispatch("getMateriaPrima");
+        store.state.materia_prima.map((obj) => {
+          ids.push(parseInt(obj.id_materia_prima));
+        });
+      } else if (tabla == "scrap") {
+        store.dispatch("getScrap");
+        store.state.scrap.map((obj) => {
+          ids.push(parseInt(obj.id_scrap));
+        });
+      } else if (tabla == "informe") {
+        store.dispatch("getInforme");
+        store.state.informe.map((obj) => {
+          ids.push(parseInt(obj.id_informe));
+        });
       }
+      let maxId = Math.max(...ids);
+      if (maxId != null || maxId != undefined || maxId != "") {
+        if (maxId > 0) {
+          maxId += 1;
+        } else {
+          maxId = 1;
+        }
+      } else {
+        maxId = 1;
+      }
+      return maxId;
     };
 
     const addmateriaprima = () => {
@@ -1001,7 +1080,9 @@ export default {
       enviscrap();
     };
 
+    //GENERAR INFORME
     const generarInforme = () => {
+      //se genera una id por proceso
       store.dispatch("getInforme");
       let informenesDelProceso = store.state.informe.filter(
         (obj) => obj.id_proceso == informe.value.id_proceso
@@ -1026,7 +1107,10 @@ export default {
         maxIdInforme = 1;
       }
 
+      let idInformeGBD = generadorID("informe");
+
       let informeAEnviar = {
+        id_informe: idInformeGBD,
         id: maxIdInforme,
         turno: informe.value.turno,
         saldo_anterior: informe.value.saldo_anterior,
@@ -1038,6 +1122,7 @@ export default {
       };
 
       informe.value.id = maxIdInforme;
+      informe.value.id_informe = idInformeGBD;
 
       store.dispatch("postInforme", informeAEnviar);
 
@@ -1224,6 +1309,8 @@ export default {
       enviscrap,
       generarInforme,
       informenesPendientes,
+      generadorID,
+      actualizarPersonal,
     };
   },
 };

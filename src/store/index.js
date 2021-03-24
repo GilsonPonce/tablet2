@@ -33,6 +33,7 @@ export default createStore({
     producto_terminado:[],
     parte: "",
     valor: "",
+    valor2:"",
     presentaraviso: false,
     tipoaviso: "aviso",
     estadoaviso: false,
@@ -312,6 +313,86 @@ export default createStore({
         console.log(error)
       }
     },
+    getRegistro: async function ({ commit }) {
+      commit('setLoading', true)
+      try {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
+
+        var requestOptions = {
+          method: 'GET',
+          headers: myHeaders,
+          redirect: 'follow'
+        };
+
+        const res = await fetch("http://localhost:8080/registro", requestOptions)
+        const data = await res.json()
+        commit('setRegistro', data.detalle)
+        commit('setLoading', false)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    getProductoTerminado: async function ({ commit }) {
+      commit('setLoading', true)
+      try {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
+
+        var requestOptions = {
+          method: 'GET',
+          headers: myHeaders,
+          redirect: 'follow'
+        };
+
+        const res = await fetch("http://localhost:8080/producto_terminado", requestOptions)
+        const data = await res.json()
+        commit('setProductoTerminado', data.detalle)
+        commit('setLoading', false)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    getMateriaPrima: async function ({ commit }) {
+      commit('setLoading', true)
+      try {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
+
+        var requestOptions = {
+          method: 'GET',
+          headers: myHeaders,
+          redirect: 'follow'
+        };
+
+        const res = await fetch("http://localhost:8080/materia_prima", requestOptions)
+        const data = await res.json()
+        commit('setMateriaPrima', data.detalle)
+        commit('setLoading', false)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    getScrap: async function ({ commit }) {
+      commit('setLoading', true)
+      try {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
+
+        var requestOptions = {
+          method: 'GET',
+          headers: myHeaders,
+          redirect: 'follow'
+        };
+
+        const res = await fetch("http://localhost:8080/scrap", requestOptions)
+        const data = await res.json()
+        commit('setScrap', data.detalle)
+        commit('setLoading', false)
+      } catch (error) {
+        console.log(error)
+      }
+    },
     postInforme: async function ({ commit },objetoinforme) {
       commit('setLoading', true)
       try {
@@ -320,6 +401,7 @@ export default createStore({
     
       
         var formdata = new FormData();
+        formdata.append("id_informe", objetoinforme.id_informe);
         formdata.append("id", objetoinforme.id);
         formdata.append("turno", objetoinforme.turno);
         formdata.append("saldo_anterior",objetoinforme.saldo_anterior);
@@ -352,6 +434,7 @@ export default createStore({
         myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
 
         var formdata = new FormData();
+        formdata.append("id_materia_prima",objetomateriaprima.id_materia_prima);
         formdata.append("id_configuracion",objetomateriaprima.id_configuracion);
         formdata.append("id_color",objetomateriaprima.id_color);
         formdata.append("id_informe",objetomateriaprima.id_informe);
@@ -366,7 +449,7 @@ export default createStore({
 
         const res = await fetch("http://localhost:8080/materia_prima", requestOptions)
         const data = await res.json()
-        commit('setMateriaPrima', data.detalle)
+        commit('mensajeaviso', data.detalle)
         commit('setLoading', false)
       } catch (error) {
         console.log(error)
@@ -380,8 +463,11 @@ export default createStore({
         myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
 
         var formdata = new FormData();
+        formdata.append("id_producto_terminado", objetoproductoterminado.id_producto_terminado);
         formdata.append("id_informe", objetoproductoterminado.id_informe);
         formdata.append("peso", objetoproductoterminado.peso);
+        formdata.append("id_color", objetoproductoterminado.id_color);
+        formdata.append("tipo", objetoproductoterminado.tipo);
 
         var requestOptions = {
           method: 'POST',
@@ -392,7 +478,7 @@ export default createStore({
 
         const res = await fetch("http://localhost:8080/producto_terminado", requestOptions)
         const data = await res.json()
-        commit('setProductoTerminado', data.detalle)
+        commit('mensajeaviso', data.detalle)
         commit('setLoading', false)
       } catch (error) {
         console.log(error)
@@ -407,6 +493,7 @@ export default createStore({
 
 
         var formdata = new FormData();
+        formdata.append("id_scrap", objetoscrap.id_scrap);
         formdata.append("motivo", objetoscrap.motivo);
         formdata.append("sacos", objetoscrap.sacos);
         formdata.append("peso", objetoscrap.peso);
@@ -421,7 +508,7 @@ export default createStore({
 
         const res = await fetch("http://localhost:8080/scrap", requestOptions)
         const data = await res.json()
-        commit('setScrap', data.detalle)
+        commit('mensajeaviso', data.detalle)
         commit('setLoading', false)
       } catch (error) {
         console.log(error)
@@ -435,6 +522,7 @@ export default createStore({
         myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
 
         var formdata = new FormData();
+        formdata.append("id_registro", objetoregistro.id_registro);
         formdata.append("id_personal", objetoregistro.id_personal);
         formdata.append("id_informe", objetoregistro.id_informe);
 
@@ -454,6 +542,27 @@ export default createStore({
       }
     },
 
+    deleteRegistro: async function ({ commit },id) {
+      commit('setLoading', true)
+      try {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
+
+        var requestOptions = {
+          method: 'DELETE',
+          headers: myHeaders,
+          redirect: 'follow'
+        };
+
+
+        const res = await fetch("http://localhost:8080/registro/"+id, requestOptions)
+        const data = await res.json()
+        commit('mensajeaviso', data.detalle)
+        commit('setLoading', false)
+      } catch (error) {
+        console.log(error)
+      }
+    },
 
   },
   getters:{
