@@ -24,9 +24,12 @@
       <div class="col">
         <form @submit.prevent="enviarinforme">
           <!-- PRESENTA ID DE INFORME GENERADO -->
-          <div class="row mb-3 justify-content-center" v-if="getgenerado && informe.id != ''">
+          <div
+            class="row mb-3 justify-content-center"
+            v-if="getgenerado && informe.id != ''"
+          >
             <div class="col-sm-12">
-              <h5>No. {{informe.id}} </h5>
+              <h5>No. {{ informe.id }}</h5>
             </div>
           </div>
 
@@ -115,12 +118,18 @@
                 </option>
               </select>
             </div>
-          
           </div>
 
           <!-- BOTON GENERAR -->
           <div class="row m-3 justify-content-center" v-if="!getgenerado">
-            <button class="col-sm-4 btn btn-success" type="button" :disabled="bloquearBotonGenerarInforme" @click="generarInforme">Generar Informe</button>
+            <button
+              class="col-sm-4 btn btn-success"
+              type="button"
+              :disabled="bloquearBotonGenerarInforme"
+              @click="generarInforme"
+            >
+              Generar Informe
+            </button>
           </div>
 
           <!-- REGISTRO DE PERSONAL -->
@@ -523,8 +532,8 @@
           >
             COMPLETADO
           </button>
-<br>
-           <button
+          <br />
+          <button
             type="sumit"
             class="btn btn-primary mb-3"
             :disabled="bloquearbotonenviar"
@@ -572,13 +581,13 @@ export default {
       id_material: "",
       id_tipo_material: "",
       id_color: "",
-      id_configuracion:"",
+      id_configuracion: "",
       peso: "",
     });
     const productoterminado = ref({
-      id_color:"",
-      peso:"",
-      tipo:""
+      id_color: "",
+      peso: "",
+      tipo: "",
     });
     const scrap = ref({
       motivo: "",
@@ -586,7 +595,7 @@ export default {
       peso: "",
     });
     const informe = ref({
-      id:"",
+      id: "",
       turno: "",
       id_linea: "1",
       id_proceso: "1",
@@ -594,31 +603,30 @@ export default {
       id_tipo_material: "",
       saldo_anterior: 0,
       observacion: "",
-      completado:"",
+      completado: "",
       materia_prima: [], //almacena objeto materia prima
       producto_terminado: [], //almacena objeto producto terminado
       scrap: [], //almacena objeto scrap
-      registro: [] //almacena objeto personal
+      registro: [], //almacena objeto personal
     });
 
-    const informenesPendientes = ()=>{
+    const informenesPendientes = () => {
+      let informenes = JSON.parse(localStorage.getItem("InformenesPendientes"));
 
-      let informenes = JSON.parse(localStorage.getItem('InformenesPendientes'))
-
-      if(informenes != null || informenes != undefined){
-        if(informenes.items.length == 1){
-        store.state.generado = true
-        informenes.items.map((info)=>{
-          informe.value.id = info.id
-          informe.value.turno = info.turno
-          informe.value.saldo_anterior = info.saldo_anterior
-          informe.value.observacion = info.observacion
-          informe.value.completado = info.completado
-          informe.value.id_proceso = info.id_proceso
-          informe.value.id_material = info.id_material
-          informe.value.id_tipo_material = info.id_tipo_material
-        })
-      }
+      if (informenes != null || informenes != undefined) {
+        if (informenes.items.length == 1) {
+          store.state.generado = true;
+          informenes.items.map((info) => {
+            informe.value.id = info.id;
+            informe.value.turno = info.turno;
+            informe.value.saldo_anterior = info.saldo_anterior;
+            informe.value.observacion = info.observacion;
+            informe.value.completado = info.completado;
+            informe.value.id_proceso = info.id_proceso;
+            informe.value.id_material = info.id_material;
+            informe.value.id_tipo_material = info.id_tipo_material;
+          });
+        }
       }
     };
 
@@ -631,17 +639,29 @@ export default {
 
         //busca en el array del objeto informe
         const idpersonexistente = informe.value.registro.find(
-          (person) => person.id_personal == codigopersonal.value
+          (obj) => obj.id_personal == codigopersonal.value
         );
 
         if (idpersonexistente == undefined || idpersonexistente == null) {
           if (person != undefined || person != null) {
             informe.value.registro.push(person);
             store.dispatch("getInforme");
-            let inforegistro = {
-              id_informe: informe
+            let informeBuscado = store.state.informe.found(
+              (obj) =>
+                obj.id == informe.value.id &&
+                obj.turno == informe.value.turno &&
+                obj.id_proceso == informe.value.id_proceso &&
+                obj.id_material == informe.value.id_material &&
+                obj.id_tipo_material == informe.value.id_tipo_material
+            );
+            if (informeBuscado != null || informeBuscado != undefined) {
+              let inforegistro = {
+                id_informe: informeBuscado.id_informe,
+                id_personal: person.id_personal,
+              };
+               store.dispatch("postRegistro",inforegistro);
             }
-            store.dispatch("postRegistro",person);
+           
           } else {
             llamarwarningadvertencia();
           }
@@ -710,7 +730,7 @@ export default {
 
     const lesspersonal = () => {
       if (store.state.estadoaviso) {
-        informe.value.codigo_personal.splice(store.state.valor, 1);
+        informe.value.registro.splice(store.state.valor, 1);
       }
     };
 
@@ -906,7 +926,8 @@ export default {
     });
 
     const bloquearBotonGenerarInforme = computed(() => {
-      if (informe.value.id_proceso == "" ||
+      if (
+        informe.value.id_proceso == "" ||
         informe.value.id_material == "" ||
         informe.value.id_tipo_material == "" ||
         informe.value.turno == ""
@@ -921,7 +942,7 @@ export default {
       return store.state.parte;
     });
 
-    const getgenerado = computed(()=>{
+    const getgenerado = computed(() => {
       return store.state.generado;
     });
 
@@ -981,45 +1002,52 @@ export default {
     };
 
     const generarInforme = () => {
-      let informenesDelProceso = store.state.informe.filter(obj => obj.id_proceso == informe.value.id_proceso )
-      let idInformenes = []
+      store.dispatch("getInforme");
+      let informenesDelProceso = store.state.informe.filter(
+        (obj) => obj.id_proceso == informe.value.id_proceso
+      );
+      let idInformenes = [];
       informenesDelProceso.map((obj) => {
-        idInformenes.push(parseInt(obj.id))
-      })
+        idInformenes.push(parseInt(obj.id));
+      });
 
-      let maxIdInforme = Math.max(...idInformenes)
-      if(maxIdInforme != null || maxIdInforme != undefined || maxIdInforme != ""){
-        if(maxIdInforme > 0){
-          maxIdInforme += 1
-        }else{
-          maxIdInforme = 1
+      let maxIdInforme = Math.max(...idInformenes);
+      if (
+        maxIdInforme != null ||
+        maxIdInforme != undefined ||
+        maxIdInforme != ""
+      ) {
+        if (maxIdInforme > 0) {
+          maxIdInforme += 1;
+        } else {
+          maxIdInforme = 1;
         }
-      }else{
-        maxIdInforme = 1
+      } else {
+        maxIdInforme = 1;
       }
 
       let informeAEnviar = {
-        "id" : maxIdInforme,
-        "turno" : informe.value.turno,
-        "saldo_anterior" : informe.value.saldo_anterior,
-        "observacion" : informe.value.observacion,
-        "completado" : 0,
-        "id_proceso" : informe.value.id_proceso,
-        "id_material" : informe.value.id_material,
-        "id_tipo_material" : informe.value.id_tipo_material
-      }
+        id: maxIdInforme,
+        turno: informe.value.turno,
+        saldo_anterior: informe.value.saldo_anterior,
+        observacion: informe.value.observacion,
+        completado: 0,
+        id_proceso: informe.value.id_proceso,
+        id_material: informe.value.id_material,
+        id_tipo_material: informe.value.id_tipo_material,
+      };
 
-      informe.value.id = maxIdInforme
+      informe.value.id = maxIdInforme;
 
       store.dispatch("postInforme", informeAEnviar);
 
-      let data = {}
-      let items = []
-      items.push(informeAEnviar)
-      data.items = items
-      localStorage.setItem('InformenesPendientes',JSON.stringify(data))
+      let data = {};
+      let items = [];
+      items.push(informeAEnviar);
+      data.items = items;
+      localStorage.setItem("InformenesPendientes", JSON.stringify(data));
 
-      store.state.generado = true
+      store.state.generado = true;
     };
 
     const envinforme = () => {
