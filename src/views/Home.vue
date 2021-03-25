@@ -662,8 +662,8 @@ export default {
         );
 
         //busca en el array del objeto informe
-        const idpersonexistente = informe.value.registro.find(
-          (obj) => obj.id_personal == codigopersonal.value
+        const idpersonexistente = store.state.registro.find(
+          (obj) => obj.id_personal == codigopersonal.value && obj.activo == 1 && obj.id_informe == informe.value.id_informe
         );
 
         if (idpersonexistente == undefined || idpersonexistente == null) {

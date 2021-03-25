@@ -535,7 +535,6 @@ export default createStore({
 
         const res = await fetch("http://localhost:8080/registro", requestOptions)
         const data = await res.json()
-        commit('mensajeaviso', data.detalle)
         commit('setLoading', false)
       } catch (error) {
         console.log(error)
