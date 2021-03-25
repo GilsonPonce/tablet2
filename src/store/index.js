@@ -508,7 +508,6 @@ export default createStore({
 
         const res = await fetch("http://localhost:8080/scrap", requestOptions)
         const data = await res.json()
-        commit('mensajeaviso', data.detalle)
         commit('setLoading', false)
       } catch (error) {
         console.log(error)
@@ -556,7 +555,69 @@ export default createStore({
 
         const res = await fetch("http://localhost:8080/registro/"+id, requestOptions)
         const data = await res.json()
-        commit('mensajeaviso', data.detalle)
+        commit('setLoading', false)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    deleteMateriaPrima: async function ({ commit },id) {
+      commit('setLoading', true)
+      try {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
+
+        var requestOptions = {
+          method: 'DELETE',
+          headers: myHeaders,
+          redirect: 'follow'
+        };
+
+
+        const res = await fetch("http://localhost:8080/materia_prima/"+id, requestOptions)
+        const data = await res.json()
+        commit('setLoading', false)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    deleteProductoTerminado: async function ({ commit },id) {
+      commit('setLoading', true)
+      try {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
+
+        var requestOptions = {
+          method: 'DELETE',
+          headers: myHeaders,
+          redirect: 'follow'
+        };
+
+
+        const res = await fetch("http://localhost:8080/producto_terminado/"+id, requestOptions)
+        const data = await res.json()
+        commit('setLoading', false)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    deleteScrap: async function ({ commit },id) {
+      commit('setLoading', true)
+      try {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
+
+        var requestOptions = {
+          method: 'DELETE',
+          headers: myHeaders,
+          redirect: 'follow'
+        };
+
+
+        const res = await fetch("http://localhost:8080/scrap/"+id, requestOptions)
+        const data = await res.json()
         commit('setLoading', false)
       } catch (error) {
         console.log(error)

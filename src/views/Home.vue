@@ -181,7 +181,7 @@
           </div>
 
           <!-- MATERIA PRIMA -->
-          <div class="row mb-3" v-if="getgenerado">
+          <div class="row mb-3 justify-content-center" v-if="getgenerado">
             <h4>Materia Prima</h4>
             <label for="selectLinea" class="col-sm-2 col-form-label"
               >Linea:</label
@@ -215,11 +215,11 @@
                 name="selectMaterial"
                 class="form-select form-select-sm"
                 id="selectMaterial"
-                v-model="materiaprima.material"
-                :disabled="materiaprima.proceso == ''"
+                v-model="materiaprima.id_material"
+                :disabled="materiaprima.id_proceso == ''"
               >
                 <option
-                  v-for="materiales in filtrarMaterial(materiaprima.proceso)"
+                  v-for="materiales in filtrarMaterial(materiaprima.id_proceso)"
                   :key="materiales.id_configuracion"
                   v-bind:value="materiales.id_material"
                 >
@@ -235,12 +235,12 @@
                 name="selectTipo"
                 class="form-select form-select-sm"
                 id="selectTipo"
-                v-model="materiaprima.tipo_material"
-                :disabled="materiaprima.material == ''"
+                v-model="materiaprima.id_tipo_material"
+                :disabled="materiaprima.id_material == ''"
               >
                 <option
                   v-for="tipomateriales in filtrarTipoMaterial(
-                    materiaprima.material
+                    materiaprima.id_material
                   )"
                   :key="tipomateriales.id_configuracion"
                   v-bind:value="tipomateriales.id_tipo_material"
@@ -257,8 +257,8 @@
                 name="selectColor"
                 class="form-select form-select-sm"
                 id="selectColor"
-                v-model="materiaprima.color"
-                :disabled="materiaprima.material == ''"
+                v-model="materiaprima.id_color"
+                :disabled="materiaprima.id_material == ''"
               >
                 <option
                   v-for="color in color"
@@ -270,29 +270,6 @@
               </select>
             </div>
             <label for="selectColor" class="col-sm-2 col-form-label"
-              >Propiedad:</label
-            >
-            <div class="col-sm-4">
-              <select
-                name="selectColor"
-                class="form-select form-select-sm"
-                id="selectColor"
-                v-model="materiaprima.propiedad"
-                :disabled="materiaprima.tipo_material == ''"
-              >
-                <option
-                  v-for="confi in filtrarPropiedad(
-                    materiaprima.material,
-                    materiaprima.tipo_material
-                  )"
-                  :key="confi.id_configuracion"
-                  v-bind:value="confi.id_propiedad"
-                >
-                  {{ confi.propiedad }}
-                </option>
-              </select>
-            </div>
-            <label for="selectColor" class="col-sm-2 col-form-label"
               >Peso:</label
             >
             <div class="col-sm-4">
@@ -300,12 +277,12 @@
                 type="number"
                 class="form-control form-control-sm"
                 v-model="materiaprima.peso"
-                :disabled="materiaprima.propiedad == ''"
+                :disabled="materiaprima.id_color == ''"
               />
             </div>
             <button
               type="button"
-              class="btn btn-success btn-sm col-sm-1"
+              class="btn btn-success btn-sm col-sm-1 m-3"
               :disabled="materiaprima.peso == ''"
               @click="addmateriaprima"
             >
@@ -317,24 +294,22 @@
             <div class="alert alert-secondary" role="alert">
               <ul
                 class="list-group"
-                v-for="(item, index) in informe.materia_prima"
+                v-for="(item, index) in MateriaPrimaDelInforme"
                 v-bind:key="index"
               >
                 <li
                   class="list-group-item d-flex justify-content-between align-items-center"
                 >
                   {{
-                    nombreLinea(item.linea) +
+                    item.linea +
                     "   " +
-                    nombreProceso(item.proceso) +
+                    item.proceso +
                     "   " +
-                    nombreMaterial(item.material) +
+                    item.material +
                     "  " +
-                    nombreTipoMaterial(item.tipo_material) +
+                    item.tipo_material +
                     "  " +
-                    nombrePropiedad(item.propiedad) +
-                    "  " +
-                    nombreColor(item.color) +
+                    item.color +
                     "  " +
                     item.peso
                   }}
@@ -342,7 +317,7 @@
                     <button
                       type="button"
                       class="btn btn-danger"
-                      @click="llamarwarningmateriaprima(index)"
+                      @click="llamarwarningmateriaprima(item.id_materia_prima)"
                     >
                       -
                     </button></span
@@ -356,20 +331,53 @@
           <div class="row mb-3" v-if="getgenerado">
             <h4>Producto Terminado</h4>
             <label for="selectColor" class="col-sm-2 col-form-label"
+              >Color:</label
+            >
+            <div class="col-sm-4">
+              <select
+                name="selectColor"
+                class="form-select form-select-sm"
+                id="selectColor"
+                v-model="productoterminado.id_color"
+              >
+                <option
+                  v-for="color in color"
+                  :key="color.id_color"
+                  v-bind:value="color.id_color"
+                >
+                  {{ color.nombre }}
+                </option>
+              </select>
+            </div>
+            <label for="selectTipoPt" class="col-sm-2 col-form-label"
+              >Tipo:</label
+            >
+            <div class="col-sm-4">
+              <select
+                name="selectTipoPt"
+                class="form-select form-select-sm"
+                id="selectTipoPt"
+                v-model="productoterminado.tipo"
+              >
+                <option value="CONFORME" selected>CONFORME</option>
+                <option value="NO CONFORME">NO CONFORME</option>
+              </select>
+            </div>
+            <label for="selectColor" class="col-sm-2 col-form-label"
               >Peso:</label
             >
             <div class="col-sm-4">
               <input
                 type="number"
                 class="form-control form-control-sm"
-                v-model="productoterminado"
+                v-model="productoterminado.peso"
                 :disabled="bloquearproductoterminado"
               />
             </div>
             <button
               type="button"
-              :disabled="productoterminado == ''"
-              @click="addproductoterminado(productoterminado)"
+              :disabled="productoterminado.tipo == '' || productoterminado.peso =='' || productoterminado.id_color == '' "
+              @click="addproductoterminado"
               class="btn btn-success btn-sm col-sm-1"
             >
               +
@@ -380,30 +388,32 @@
             <div class="alert alert-secondary" role="alert">
               <ul
                 class="list-group"
-                v-for="(item, index) in informe.producto_terminado"
+                v-for="(item, index) in ProductoTerminadoDelInforme"
                 v-bind:key="index"
               >
                 <li
                   class="list-group-item d-flex justify-content-between align-items-center"
                 >
                   {{
-                    nombreLinea(informe.linea) +
+                    item.linea +
                     " " +
-                    nombreProceso(informe.proceso) +
+                    item.proceso +
                     " " +
-                    nombreMaterial(informe.material) +
-                    "  " +
-                    nombreTipoMaterial(informe.tipo_material) +
-                    "  " +
-                    nombreColor(informe.color) +
+                    item.material +
                     " " +
-                    item
+                    item.tipo_material +
+                    " " +
+                    item.color +
+                    " " +
+                    item.peso +
+                    " " +
+                    item.tipo
                   }}
                   <span class="badge badge-primary badge-pill">
                     <button
                       type="button"
                       class="btn btn-danger"
-                      @click="llamarwarningproductoterminado(index)"
+                      @click="llamarwarningproductoterminado(item.id_producto_terminado)"
                     >
                       -
                     </button></span
@@ -424,12 +434,12 @@
                 name="selectColor"
                 class="form-select form-select-sm"
                 id="selectColor"
-                v-model="scrap.tipo"
+                v-model="scrap.motivo"
               >
                 <option
                   v-for="desperdicio in tipoDesperdicio"
                   :key="desperdicio.id_tipo_desperdicio"
-                  v-bind:value="desperdicio.id_tipo_desperdicio"
+                  v-bind:value="desperdicio.nombre"
                 >
                   {{ desperdicio.nombre }}
                 </option>
@@ -468,24 +478,24 @@
             <div class="alert alert-secondary" role="alert">
               <ul
                 class="list-group"
-                v-for="(item, index) in informe.scrap"
+                v-for="(item, index) in ScrapDelInforme"
                 v-bind:key="index"
               >
                 <li
                   class="list-group-item d-flex justify-content-between align-items-center"
                 >
                   {{
-                    nombreTipoDesperdicio(item.tipo) +
-                    "-" +
+                    item.motivo +
+                    " " +
                     item.sacos +
-                    "-" +
+                    " " +
                     item.peso
                   }}
                   <span class="badge badge-primary badge-pill">
                     <button
                       type="button"
                       class="btn btn-danger"
-                      @click="llamarwarningscrap(index)"
+                      @click="llamarwarningscrap(item.id_scrap)"
                     >
                       -
                     </button></span
@@ -573,33 +583,28 @@ export default {
     store.dispatch("getMaterial");
     store.dispatch("getTipoMaterial");
     store.dispatch("getInforme");
-   
+    store.dispatch("getMateriaPrima");
+    store.dispatch("getProductoTerminado");
+    store.dispatch("getScrap");
 
     const codigopersonal = ref("");
     const materiaprima = ref({
-      id_materia_prima: "",
-      id_informe: "",
       id_linea: "1",
       id_proceso: "1",
       id_material: "",
       id_tipo_material: "",
       id_color: "",
-      id_configuracion: "",
       peso: "",
     });
     const productoterminado = ref({
-      id_producto_terminado: "",
-      id_informe: "",
       id_color: "",
       peso: "",
       tipo: "",
     });
     const scrap = ref({
-      id_scrap: "",
       motivo: "",
       sacos: "",
       peso: "",
-      id_informe: "",
     });
     const informe = ref({
       id_informe: "",
@@ -612,19 +617,14 @@ export default {
       saldo_anterior: 0,
       observacion: "",
       completado: "",
-      materia_prima: [], //almacena objeto materia prima
-      producto_terminado: [], //almacena objeto producto terminado
-      scrap: [], //almacena objeto scrap
-      registro: [], //almacena objeto personal
     });
 
     //CARGA LA INFORMACION DEL INFORME PENDIENTE QUE ESTA EN LOCALSTORE
     const informenesPendientes = () => {
-      let informenes = JSON.parse(localStorage.getItem("InformenesPendientes"));
-
+      let informenes = JSON.parse(localStorage.getItem("InformenesPendientes"))
+      
       if (informenes != null || informenes != undefined) {
         if (informenes.items.length == 1) {
-          store.state.generado = true;
           informenes.items.map((info) => {
             informe.value.id_informe = info.id_informe;
             informe.value.id = info.id;
@@ -640,7 +640,21 @@ export default {
       }
     };
     informenesPendientes();
-    
+
+    //VALIDAR EN GBD QUE ESTE EL MISMO ESTADO DE COMPLETADO
+    const validarCompletado = () => {
+      let infoGBDInforme = store.state.informe.find(obj => obj.id_informe == informe.value.id_informe)
+      if(infoGBDInforme != null || infoGBDInforme != undefined){ 
+        if(infoGBDInforme.completado == 1){
+          store.state.generado = false
+        }
+      }else{
+        store.state.generado = false
+      }
+    }
+
+    validarCompletado();
+
     const PersonalDelInforme = computed(() => {
       if (store.state.generado) {
         return store.state.registro.filter((obj) => {
@@ -648,7 +662,36 @@ export default {
             return obj;
           }
         });
-        
+      }
+    });
+
+    const MateriaPrimaDelInforme = computed(() => {
+      if (store.state.generado) {
+        return store.state.materia_prima.filter(function(obj){
+          if (obj.id_informe == informe.value.id_informe) {
+            return obj;
+          }
+        });
+      }
+    });
+
+    const ProductoTerminadoDelInforme = computed(() => {
+      if (store.state.generado) {
+        return store.state.producto_terminado.filter((obj) => {
+          if (obj.id_informe == informe.value.id_informe) {
+            return obj;
+          }
+        });
+      }
+    });
+
+    const ScrapDelInforme = computed(() => {
+      if (store.state.generado) {
+        return store.state.scrap.filter((obj) => {
+          if (obj.id_informe == informe.value.id_informe) {
+            return obj;
+          }
+        });
       }
     });
 
@@ -663,7 +706,10 @@ export default {
 
         //busca en el array del objeto informe
         const idpersonexistente = store.state.registro.find(
-          (obj) => obj.id_personal == codigopersonal.value && obj.activo == 1 && obj.id_informe == informe.value.id_informe
+          (obj) =>
+            obj.id_personal == codigopersonal.value &&
+            obj.activo == 1 &&
+            obj.id_informe == informe.value.id_informe
         );
 
         if (idpersonexistente == undefined || idpersonexistente == null) {
@@ -793,57 +839,96 @@ export default {
       return maxId;
     };
 
+    //MATERIA PRIMA
     const addmateriaprima = () => {
-      let materiapri = new Object();
-      materiapri.linea = materiaprima.value.linea;
-      materiapri.proceso = materiaprima.value.proceso;
-      materiapri.material = materiaprima.value.material;
-      materiapri.tipo_material = materiaprima.value.tipo_material;
-      materiapri.color = materiaprima.value.color;
-      materiapri.propiedad = materiaprima.value.propiedad;
-      materiapri.peso = materiaprima.value.peso;
-      informe.value.materia_prima.push(materiapri);
-      materiaprima.value.material = "";
-      materiaprima.value.tipo_material = "";
-      materiaprima.value.propiedad = "";
-      materiaprima.value.color = "";
+
+      let idConfiguracion = store.state.configuracion.find(function (obj) {
+        if (
+          obj.id_linea == materiaprima.value.id_linea &&
+          obj.id_proceso == materiaprima.value.id_proceso &&
+          obj.id_material == materiaprima.value.id_material &&
+          obj.id_tipo_material == materiaprima.value.id_tipo_material
+        ) {
+          return obj;
+        }
+      });
+
+      if (idConfiguracion != null || idConfiguracion != undefined) {
+        let id = generadorID("materiaPrima");
+        let info = {
+          id_materia_prima: id,
+          id_configuracion: idConfiguracion.id_configuracion,
+          id_color: materiaprima.value.id_color,
+          id_informe: informe.value.id_informe,
+          peso: materiaprima.value.peso,
+        };
+        store.dispatch("postMateriaPrima", info);
+        location.reload();
+      }
+
+      materiaprima.value.id_material = "";
+      materiaprima.value.id_tipo_material = "";
+      materiaprima.value.id_color = "";
       materiaprima.value.peso = "";
     };
 
     const lessmateriaprima = () => {
       if (store.state.estadoaviso) {
-        informe.value.materia_prima.splice(store.state.valor, 1);
+        store.dispatch("deleteMateriaPrima", store.state.valor);
+        location.reload();
       }
     };
 
-    const addproductoterminado = (peso) => {
-      informe.value.producto_terminado.push(peso);
-      productoterminado.value = "";
+    //PRODUCTO TERMINADO
+    const addproductoterminado = () => {
+      let id = generadorID("productoTerminado")
+      let info = {
+        id_producto_terminado: id,
+        id_informe: informe.value.id_informe,
+        id_color: productoterminado.value.id_color,
+        peso: productoterminado.value.peso,
+        tipo: productoterminado.value.tipo
+      }
+      store.dispatch("postProductoTerminado", info);
+      productoterminado.value.id_color = ""
+      productoterminado.value.tipo = ""
+      productoterminado.value.peso = ""
+      location.reload();
     };
 
-    const lessproductoterminado = (valor) => {
+    const lessproductoterminado = () => {
       if (store.state.estadoaviso) {
-        informe.value.producto_terminado.splice(store.state.valor, 1);
+        store.dispatch("deleteProductoTerminado", store.state.valor);
+        location.reload();
       }
     };
 
+  // SCRAP
     const addscrap = () => {
-      let scrapobj = new Object();
-      scrapobj.tipo = scrap.value.tipo;
-      scrapobj.sacos = scrap.value.sacos;
-      scrapobj.peso = scrap.value.peso;
-      informe.value.scrap.push(scrapobj);
+      let id = generadorID("scrap")
+      let info = {
+        id_scrap: id,
+        motivo: scrap.value.motivo,
+        sacos: scrap.value.sacos,
+        peso: scrap.value.peso,
+        id_informe: informe.value.id_informe
+      }
+      store.dispatch("postScrap", info);
       scrap.value.tipo = "";
       scrap.value.sacos = "";
       scrap.value.peso = "";
+      location.reload();
+      
     };
 
     const lessscrap = () => {
       if (store.state.estadoaviso) {
-        informe.value.scrap.splice(store.state.valor, 1);
+        store.dispatch("deleteScrap", store.state.valor);
+        location.reload();
       }
     };
 
+//FILTRAR DE CONFIGURACION Y OBTENGO INFORMACION UNICA
     const filtrarMaterial = (valor) => {
       let filtro = store.state.configuracion.filter(
         (confi) => confi.id_proceso == valor
@@ -893,34 +978,43 @@ export default {
       return unicos;
     };
 
+    //COLORES 
     const color = computed(() => {
       return store.state.color;
     });
 
+    //TIPO DE DESPERDICIO (MOTIVO EN SCRAP)
     const tipoDesperdicio = computed(() => {
       return store.state.tipo_desperdicio;
     });
 
+    //CALCULOS 
     const totalmateriaprima = computed(() => {
       let suma = 0;
-      for (let i = 0; i < informe.value.materia_prima.length; i++) {
-        suma += parseFloat(informe.value.materia_prima[i].peso);
+      for (let i = 0; i < store.state.materia_prima.length; i++) {
+        if(store.state.materia_prima[i].id_informe == informe.value.id_informe){
+          suma += parseFloat(store.state.materia_prima[i].peso);
+        }
       }
       return suma;
     });
 
     const totalproductoterminado = computed(() => {
       let suma = 0;
-      for (let i = 0; i < informe.value.producto_terminado.length; i++) {
-        suma += parseFloat(informe.value.producto_terminado[i]);
+      for (let i = 0; i < store.state.producto_terminado.length; i++) {
+        if(store.state.producto_terminado[i].id_informe == informe.value.id_informe){
+          suma += parseFloat(store.state.producto_terminado[i].peso);
+        }
       }
       return suma;
     });
 
     const totalscrap = computed(() => {
       let suma = 0;
-      for (let i = 0; i < informe.value.scrap.length; i++) {
-        suma += parseFloat(informe.value.scrap[i].peso);
+      for (let i = 0; i < store.state.scrap.length; i++) {
+        if(store.state.scrap[i].id_informe == informe.value.id_informe){
+          suma += parseFloat(store.state.scrap[i].peso);
+        } 
       }
       return suma;
     });
@@ -929,40 +1023,43 @@ export default {
       let materiaprimatotal = 0;
       let productoterminadototal = 0;
       let scraptotal = 0;
-      for (let i = 0; i < informe.value.materia_prima.length; i++) {
-        materiaprimatotal += parseFloat(informe.value.materia_prima[i].peso);
+
+      for (let i = 0; i < store.state.materia_prima.length; i++) {
+        if(store.state.materia_prima[i].id_informe == informe.value.id_informe){
+          materiaprimatotal += parseFloat(store.state.materia_prima[i].peso);
+        }
       }
-      for (let i = 0; i < informe.value.producto_terminado.length; i++) {
-        productoterminadototal += parseFloat(
-          informe.value.producto_terminado[i]
-        );
+    
+      for (let i = 0; i < store.state.producto_terminado.length; i++) {
+        if(store.state.producto_terminado[i].id_informe == informe.value.id_informe){
+          productoterminadototal += parseFloat(store.state.producto_terminado[i].peso);
+        }
       }
-      for (let i = 0; i < informe.value.scrap.length; i++) {
-        scraptotal += parseFloat(informe.value.scrap[i].peso);
+
+      for (let i = 0; i < store.state.scrap.length; i++) {
+        if(store.state.scrap[i].id_informe == informe.value.id_informe){
+          scraptotal += parseFloat(store.state.scrap[i].peso);
+        } 
       }
-      let sumatotal =
-        materiaprimatotal +
-        parseFloat(informe.value.saldo_anterior) -
-        (productoterminadototal + scraptotal);
-      if (sumatotal < 0) {
+
+      let sumatotal = (materiaprimatotal + parseFloat(informe.value.saldo_anterior)) - (productoterminadototal + scraptotal);
+     
+      if (sumatotal < 0 || isNaN(sumatotal)) {
         return 0;
       } else {
         return sumatotal;
       }
     });
 
+
     const bloquearbotonenviar = computed(() => {
       if (
-        informe.value.fecha == "" ||
         informe.value.turno == "" ||
-        informe.value.registro.length == 0 ||
         informe.value.linea == "" ||
         informe.value.proceso == "" ||
         informe.value.material == "" ||
         informe.value.tipo_material == "" ||
-        informe.value.color == "" ||
-        informe.value.materia_prima.length == 0 ||
-        informe.value.producto_terminado.length == 0
+        informe.value.color == "" 
       ) {
         return true;
       } else {
@@ -1005,60 +1102,9 @@ export default {
       return store.state.generado;
     });
 
-    const nombreLinea = (id) => {
-      let lineas = store.state.linea.find((line) => line.id_linea == id);
-      return lineas.nombre;
-    };
-
-    const nombreProceso = (id) => {
-      let proceso = store.state.proceso.find((pro) => pro.id_proceso == id);
-      return proceso.nombre;
-    };
-
-    const nombreMaterial = (id) => {
-      let material = store.state.material.find(
-        (mate) => mate.id_material == id
-      );
-      return material.nombre;
-    };
-
-    const nombreTipoMaterial = (id) => {
-      let tipomaterial = store.state.tipo_material.find(
-        (tipomate) => tipomate.id_tipo_material == id
-      );
-      return tipomaterial.nombre;
-    };
-
-    const nombrePropiedad = (id) => {
-      let propied = store.state.propiedad.find(
-        (propi) => propi.id_propiedad == id
-      );
-      return propied.nombre;
-    };
-
-    const nombreColor = (id) => {
-      let colors = store.state.color.find((co) => co.id_color == id);
-      return colors.nombre;
-    };
-
-    const nombreTipoDesperdicio = (id) => {
-      let desperdicio = store.state.tipo_desperdicio.find(
-        (co) => co.id_tipo_desperdicio == id
-      );
-      return desperdicio.nombre;
-    };
-
     const presentaraviso = computed(() => {
       return store.state.presentaraviso;
     });
-
-    const enviarinforme = () => {
-      envinforme();
-      envimateriaprima();
-      enviproductoterminado();
-      envipersonal();
-      enviscrap();
-    };
 
     //GENERAR INFORME
     const generarInforme = () => {
@@ -1089,6 +1135,14 @@ export default {
 
       let idInformeGBD = generadorID("informe");
 
+      if(
+        informe.value.saldo_anterior == null ||
+        informe.value.saldo_anterior == undefined ||
+        informe.value.saldo_anterior == ""
+      ){
+        informe.value.saldo_anterior = 0
+      }
+
       let informeAEnviar = {
         id_informe: idInformeGBD,
         id: maxIdInforme,
@@ -1115,129 +1169,7 @@ export default {
       store.state.generado = true;
     };
 
-    const envinforme = () => {
-      let info = {
-        fecha: informe.value.fecha,
-        turno: informe.value.turno,
-        saldo_anterior: informe.value.saldo_anterior,
-        observacion: informe.value.observaciones,
-        id_proceso: informe.value.proceso,
-        id_material: informe.value.material,
-        id_tipo_material: informe.value.tipo_material,
-        id_color: informe.value.color,
-      };
-      store.dispatch("postInforme", info);
-    };
-
-    const envimateriaprima = () => {
-      store.dispatch("getInforme");
-      let idinforme = [];
-      if (store.state.informe.length != 0) {
-        for (let infor in store.state.informe) {
-          idinforme.push(parseInt(infor.id_informe));
-        }
-      }
-      let ultimoid = 0;
-      if (idinforme.length != 0) {
-        ultimoid = Math.max(...idinforme);
-      } else {
-        ultimoid = 1;
-      }
-
-      for (let mate in informe.materia_prima) {
-        let config = store.state.configuracion.filter(
-          (co) =>
-            co.id_proceso == mate.proceso &&
-            co.id_material == mate.material &&
-            co.id_tipo_material == mate.tipo_material &&
-            co.id_propiedad == mate.propiedad &&
-            co.estado > 0
-        );
-        let objetmateriaprima = {
-          id_configuracion: config.id_configuracion,
-          id_color: mate.color,
-          id_informe: ultimoid,
-          peso: mate.peso,
-        };
-
-        store.dispatch("postMateriaPrima", objetmateriaprima);
-      }
-    };
-
-    const enviproductoterminado = () => {
-      store.dispatch("getInforme");
-      let idinforme = [];
-      if (store.state.informe.length != 0) {
-        for (let infor in store.state.informe) {
-          idinforme.push(parseInt(infor.id_informe));
-        }
-      }
-      let ultimoid = 0;
-      if (idinforme.length != 0) {
-        ultimoid = Math.max(...idinforme);
-      } else {
-        ultimoid = 1;
-      }
-      for (let prod in informe.producto_terminado) {
-        let productterminado = {
-          id_informe: ultimoid,
-          peso: prod,
-        };
-
-        store.dispatch("postProductoTerminado", productterminado);
-      }
-    };
-
-    const envipersonal = () => {
-      store.dispatch("getInforme");
-      let idinforme = [];
-      if (store.state.informe.length != 0) {
-        for (let infor in store.state.informe) {
-          idinforme.push(parseInt(infor.id_informe));
-        }
-      }
-      let ultimoid = 0;
-      if (idinforme.length != 0) {
-        ultimoid = Math.max(...idinforme);
-      } else {
-        ultimoid = 1;
-      }
-      for (let codiper in informe.codigo_personal) {
-        let objetoregistro = {
-          id_personal: codiper.id_personal,
-          id_informe: ultimoid,
-        };
-
-        store.dispatch("postRegistro", objetoregistro);
-      }
-    };
-
-    const enviscrap = () => {
-      store.dispatch("getInforme");
-      let idinforme = [];
-      if (store.state.informe.length != 0) {
-        for (let infor in store.state.informe) {
-          idinforme.push(parseInt(infor.id_informe));
-        }
-      }
-      let ultimoid = 0;
-      if (idinforme.length != 0) {
-        ultimoid = Math.max(...idinforme);
-      } else {
-        ultimoid = 1;
-      }
-      for (let sc in informe.scrap) {
-        let objetoscrap = {
-          motivo: sc.tipo,
-          sacos: sc.sacos,
-          peso: sc.peso,
-          id_informe: ultimoid,
-        };
-
-        store.dispatch("postScrap", objetoscrap);
-      }
-    };
-
+   
     return {
       codigopersonal,
       materiaprima,
@@ -1263,12 +1195,6 @@ export default {
       saldomaterial,
       bloquearbotonenviar,
       bloquearBotonGenerarInforme,
-      nombreLinea,
-      nombreProceso,
-      nombreMaterial,
-      nombreTipoMaterial,
-      nombreColor,
-      nombrePropiedad,
       bloquearproductoterminado,
       presentaraviso,
       llamarwarningpersonal,
@@ -1279,18 +1205,15 @@ export default {
       getgenerado,
       llamarwarningadvertencia,
       llamarwarningadvertenciaexiste,
-      nombreTipoDesperdicio,
       presentarloading,
-      enviarinforme,
-      envinforme,
-      envimateriaprima,
-      enviproductoterminado,
-      envipersonal,
-      enviscrap,
       generarInforme,
       informenesPendientes,
       generadorID,
       PersonalDelInforme,
+      MateriaPrimaDelInforme,
+      ProductoTerminadoDelInforme,
+      ScrapDelInforme,
+      validarCompletado,
     };
   },
 };
