@@ -159,18 +159,18 @@
             <div class="alert alert-secondary" role="alert">
               <ul
                 class="list-group"
-                v-for="(item, index) in informe.registro"
+                v-for="(item, index) in PersonalDelInforme"
                 v-bind:key="index"
               >
                 <li
                   class="list-group-item d-flex justify-content-between align-items-center"
                 >
-                  {{ item.apellido + " " + item.nombre }}
+                  {{ item.personal }}
                   <span class="badge badge-primary badge-pill">
                     <button
                       type="button"
                       class="btn btn-danger"
-                      @click="llamarwarningpersonal(index, item.id_registro)"
+                      @click="llamarwarningpersonal(item.id_registro)"
                     >
                       -
                     </button></span
@@ -575,10 +575,6 @@ export default {
     store.dispatch("getInforme");
    
 
-    onBeforeUpdate(() => {
-      actualizarPersonal();
-    });
-
     const codigopersonal = ref("");
     const materiaprima = ref({
       id_materia_prima: "",
@@ -645,31 +641,16 @@ export default {
     };
     informenesPendientes();
     
-    const actualizarPersonal = () => {
+    const PersonalDelInforme = computed(() => {
       if (store.state.generado) {
-        informe.value.registro = [];
-
-        let registrosDeInforme = store.state.registro.filter((obj) => {
+        return store.state.registro.filter((obj) => {
           if (obj.id_informe == informe.value.id_informe && obj.activo == 1) {
             return obj;
           }
         });
-
-        if (
-          registrosDeInforme != null ||
-          registrosDeInforme != undefined ||
-          registrosDeInforme != ""
-        ) {
-          registrosDeInforme.map(function (objinfo) {
-            let persona = store.state.personal.find(
-              (objper) => objper.id_personal == objinfo.id_personal
-            );
-            persona.id_registro = objinfo.id_registro;
-            informe.value.registro.push(persona);
-          });
-        }
+        
       }
-    };
+    });
 
     //PERSONAL
     //AGREGA Y RESGISTRA PERSONAL
@@ -730,14 +711,13 @@ export default {
       store.state.tipoaviso = "aviso";
     };
 
-    const llamarwarningpersonal = (valor, valor2) => {
+    const llamarwarningpersonal = (valor) => {
       if (store.state.presentaraviso === false) {
         store.state.presentaraviso = true;
         store.state.mensaje = "¿Seguro que deseas quitar?";
         store.state.tipoaviso = "sino";
         store.state.parte = "personal";
-        store.state.valor = valor;
-        store.state.valor2 = valor2;
+        store.state.valor2 = valor;
       }
     };
 
@@ -1310,7 +1290,7 @@ export default {
       generarInforme,
       informenesPendientes,
       generadorID,
-      actualizarPersonal,
+      PersonalDelInforme,
     };
   },
 };
