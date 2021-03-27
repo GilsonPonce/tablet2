@@ -150,7 +150,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/material", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/material", requestOptions)
         const data = await res.json()
         commit('setMaterial', data.detalle)
         commit('setLoading', false)
@@ -170,7 +170,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/tipo_material", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/tipo_material", requestOptions)
         const data = await res.json()
         commit('setTipoMaterial', data.detalle)
         commit('setLoading', false)
@@ -190,7 +190,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/propiedad", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/propiedad", requestOptions)
         const data = await res.json()
         commit('setPropiedad', data.detalle)
         commit('setLoading', false)
@@ -210,7 +210,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/color", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/color", requestOptions)
         const data = await res.json()
         commit('setColor', data.detalle)
         commit('setLoading', false)
@@ -230,7 +230,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/personal", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/personal", requestOptions)
         const data = await res.json()
         commit('setPersonal', data.detalle)
         commit('setLoading', false)
@@ -250,7 +250,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/configuracion", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/configuracion", requestOptions)
         const data = await res.json()
         commit('setConfiguracion', data.detalle)
         commit('setLoading', false)
@@ -270,7 +270,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/tipo_desperdicio", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/tipo_desperdicio", requestOptions)
         const data = await res.json()
         commit('setTipoDesperdicio', data.detalle)
         commit('setLoading', false)
@@ -290,7 +290,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/informe", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/informe", requestOptions)
         const data = await res.json()
         commit('setInforme', data.detalle)
         commit('setLoading', false)
@@ -310,7 +310,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/registro", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/registro", requestOptions)
         const data = await res.json()
         commit('setRegistro', data.detalle)
         commit('setLoading', false)
@@ -330,7 +330,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/producto_terminado", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/producto_terminado", requestOptions)
         const data = await res.json()
         commit('setProductoTerminado', data.detalle)
         commit('setLoading', false)
@@ -350,7 +350,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/materia_prima", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/materia_prima", requestOptions)
         const data = await res.json()
         commit('setMateriaPrima', data.detalle)
         commit('setLoading', false)
@@ -370,7 +370,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/scrap", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/scrap", requestOptions)
         const data = await res.json()
         commit('setScrap', data.detalle)
         commit('setLoading', false)
@@ -403,7 +403,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/informe", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/informe", requestOptions)
         const data = await res.json()
         commit('setLoading', false)
       } catch (error) {
@@ -431,7 +431,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/materia_prima", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/materia_prima", requestOptions)
         const data = await res.json()
         commit('mensajeaviso', data.detalle)
         commit('setLoading', false)
@@ -461,7 +461,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/producto_terminado", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/producto_terminado", requestOptions)
         const data = await res.json()
         commit('mensajeaviso', data.detalle)
         commit('setLoading', false)
@@ -491,7 +491,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/scrap", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/scrap", requestOptions)
         const data = await res.json()
         commit('setLoading', false)
       } catch (error) {
@@ -517,7 +517,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://apiproduccion.novared.local/registro", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/registro", requestOptions)
         const data = await res.json()
         commit('setLoading', false)
       } catch (error) {
@@ -538,7 +538,7 @@ export default createStore({
         };
 
 
-        const res = await fetch("http://apiproduccion.novared.local/registro/"+id, requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/registro/"+id, requestOptions)
         const data = await res.json()
         commit('setLoading', false)
       } catch (error) {
@@ -559,7 +559,7 @@ export default createStore({
         };
 
 
-        const res = await fetch("http://apiproduccion.novared.local/materia_prima/"+id, requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/materia_prima/"+id, requestOptions)
         const data = await res.json()
         commit('setLoading', false)
       } catch (error) {
@@ -580,7 +580,7 @@ export default createStore({
         };
 
 
-        const res = await fetch("http://apiproduccion.novared.local/producto_terminado/"+id, requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/producto_terminado/"+id, requestOptions)
         const data = await res.json()
         commit('setLoading', false)
       } catch (error) {
@@ -601,7 +601,7 @@ export default createStore({
         };
 
 
-        const res = await fetch("http://apiproduccion.novared.local/scrap/"+id, requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/scrap/"+id, requestOptions)
         const data = await res.json()
         commit('setLoading', false)
       } catch (error) {
@@ -636,7 +636,7 @@ export default createStore({
         };
 
 
-        const res = await fetch("http://apiproduccion.novared.local/informe/"+objetoInforme.id_informe, requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/informe/"+objetoInforme.id_informe, requestOptions)
         const data = await res.text()
         commit('setLoading', false)
       } catch (error) {
