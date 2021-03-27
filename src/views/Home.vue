@@ -15,14 +15,27 @@
     <div v-else-if="obtenerparte == 'scrap'">
       <warning @accion="lessscrap" />
     </div>
+    <div v-else-if="obtenerparte == 'informe'">
+      <warning @accion="enviarinforme" />
+    </div>
     <div v-else>
       <warning />
     </div>
   </div>
+  <div class="position-fixed top-0 start-0">
+    <button
+      type="button"
+      class="btn btn-success"
+      @click="refresh"
+      v-if="getgenerado"
+    >
+      <i class="fa fa-refresh"></i>
+    </button>
+  </div>
   <div class="container">
     <div class="row">
       <div class="col">
-        <form @submit.prevent="enviarinforme">
+        <form>
           <!-- PRESENTA ID DE INFORME GENERADO -->
           <div
             class="row mb-3 justify-content-center"
@@ -376,7 +389,11 @@
             </div>
             <button
               type="button"
-              :disabled="productoterminado.tipo == '' || productoterminado.peso =='' || productoterminado.id_color == '' "
+              :disabled="
+                productoterminado.tipo == '' ||
+                productoterminado.peso == '' ||
+                productoterminado.id_color == ''
+              "
               @click="addproductoterminado"
               class="btn btn-success btn-sm col-sm-1"
             >
@@ -413,7 +430,11 @@
                     <button
                       type="button"
                       class="btn btn-danger"
-                      @click="llamarwarningproductoterminado(item.id_producto_terminado)"
+                      @click="
+                        llamarwarningproductoterminado(
+                          item.id_producto_terminado
+                        )
+                      "
                     >
                       -
                     </button></span
@@ -484,13 +505,7 @@
                 <li
                   class="list-group-item d-flex justify-content-between align-items-center"
                 >
-                  {{
-                    item.motivo +
-                    " " +
-                    item.sacos +
-                    " " +
-                    item.peso
-                  }}
+                  {{ item.motivo + " " + item.sacos + " " + item.peso }}
                   <span class="badge badge-primary badge-pill">
                     <button
                       type="button"
@@ -511,11 +526,15 @@
               <strong>Total MP: </strong>{{ totalmateriaprima }} Kg<br />
               <strong>Total PT: </strong>{{ totalproductoterminado }} Kg<br />
               <strong>Saldo Anterior: </strong
-              ><input
-                type="number"
-                class=""
-                v-model="informe.saldo_anterior"
-              /><br />
+              ><input type="number" class="" v-model="informe.saldo_anterior" />
+              <button
+                type="button"
+                class="btn btn-warning m-3"
+                @click="guardarSaldoAnterior"
+              >
+                Guardar
+              </button>
+              <br />
               <strong>Total SCRAP: </strong>{{ totalscrap }} Kg<br />
               <strong>Saldo Material: </strong>{{ saldomaterial }} Kg<br />
             </p>
@@ -528,28 +547,20 @@
               <textarea
                 class="form-control"
                 aria-label="With textarea"
-                v-model="informe.observaciones"
+                v-model="informe.observacion"
               ></textarea>
             </div>
           </div>
 
           <!-- BOTON DE CONFIRMACION DE COMPLETADO -->
           <button
-            type="sumit"
+            type="button"
             class="btn btn-primary mb-3"
             :disabled="bloquearbotonenviar"
             v-if="getgenerado"
+            @click="llamarwarningInforme"
           >
             COMPLETADO
-          </button>
-          <br />
-          <button
-            type="sumit"
-            class="btn btn-primary mb-3"
-            :disabled="bloquearbotonenviar"
-            v-if="getgenerado"
-          >
-            GENERAR UN NUEVO INFORME
           </button>
         </form>
       </div>
@@ -621,10 +632,11 @@ export default {
 
     //CARGA LA INFORMACION DEL INFORME PENDIENTE QUE ESTA EN LOCALSTORE
     const informenesPendientes = () => {
-      let informenes = JSON.parse(localStorage.getItem("InformenesPendientes"))
-      
+      let informenes = JSON.parse(localStorage.getItem("InformenesPendientes"));
+      let saldo = localStorage.getItem("saldoAnterior");
       if (informenes != null || informenes != undefined) {
         if (informenes.items.length == 1) {
+          store.state.generado = true;
           informenes.items.map((info) => {
             informe.value.id_informe = info.id_informe;
             informe.value.id = info.id;
@@ -638,22 +650,29 @@ export default {
           });
         }
       }
+
+      if (saldo != null || saldo != undefined) {
+        informe.value.saldo_anterior = saldo;
+      }
     };
     informenesPendientes();
 
     //VALIDAR EN GBD QUE ESTE EL MISMO ESTADO DE COMPLETADO
     const validarCompletado = () => {
-      let infoGBDInforme = store.state.informe.find(obj => obj.id_informe == informe.value.id_informe)
-      if(infoGBDInforme != null || infoGBDInforme != undefined){ 
-        if(infoGBDInforme.completado == 1){
-          store.state.generado = false
+      store.dispatch("getInforme");
+      let infoGBDInforme = store.state.informe.find(
+        (obj) => obj.id_informe == informe.value.id_informe
+      );
+      if (infoGBDInforme != null || infoGBDInforme != undefined) {
+        if (infoGBDInforme.completado == 1) {
+          return true;
+        } else {
+          return false;
         }
-      }else{
-        store.state.generado = false
+      } else {
+        return false;
       }
-    }
-
-    validarCompletado();
+    };
 
     const PersonalDelInforme = computed(() => {
       if (store.state.generado) {
@@ -667,7 +686,7 @@ export default {
 
     const MateriaPrimaDelInforme = computed(() => {
       if (store.state.generado) {
-        return store.state.materia_prima.filter(function(obj){
+        return store.state.materia_prima.filter(function (obj) {
           if (obj.id_informe == informe.value.id_informe) {
             return obj;
           }
@@ -705,12 +724,15 @@ export default {
         );
 
         //busca en el array del objeto informe
-        const idpersonexistente = store.state.registro.find(
-          (obj) =>
+        const idpersonexistente = store.state.registro.find(function (obj) {
+          if (
             obj.id_personal == codigopersonal.value &&
             obj.activo == 1 &&
             obj.id_informe == informe.value.id_informe
-        );
+          ) {
+            return obj;
+          }
+        });
 
         if (idpersonexistente == undefined || idpersonexistente == null) {
           if (person != undefined || person != null) {
@@ -733,8 +755,26 @@ export default {
     };
 
     const lesspersonal = () => {
-      if (store.state.estadoaviso) {
-        store.dispatch("deleteRegistro", store.state.valor2);
+      //store.state.valor2 es la id_registro
+      store.dispatch("getRegistro");
+      let registrosInforme = store.state.registro.filter((obj) => {
+        if (obj.id_informe == informe.value.id_informe && obj.activo == 1) {
+          return obj;
+        }
+      });
+      let registro = registrosInforme.find(
+        (obj) => obj.id_registro == store.state.valor2
+      );
+      if (registro != null || registro != undefined) {
+        if (registro.activo == 1) {
+          if (store.state.estadoaviso) {
+            store.dispatch("deleteRegistro", store.state.valor2);
+            location.reload();
+          }
+        } else {
+          location.reload();
+        }
+      } else {
         location.reload();
       }
     };
@@ -797,6 +837,15 @@ export default {
       }
     };
 
+    const llamarwarningInforme = () => {
+      if (store.state.presentaraviso === false) {
+        store.state.presentaraviso = true;
+        store.state.mensaje = "¿Deseas terminar el Informe?";
+        store.state.tipoaviso = "sino";
+        store.state.parte = "informe";
+      }
+    };
+
     //GENERADOR DE IDS
     const generadorID = (tabla) => {
       let ids = [];
@@ -841,7 +890,6 @@ export default {
 
     //MATERIA PRIMA
     const addmateriaprima = () => {
-
       let idConfiguracion = store.state.configuracion.find(function (obj) {
         if (
           obj.id_linea == materiaprima.value.id_linea &&
@@ -881,18 +929,18 @@ export default {
 
     //PRODUCTO TERMINADO
     const addproductoterminado = () => {
-      let id = generadorID("productoTerminado")
+      let id = generadorID("productoTerminado");
       let info = {
         id_producto_terminado: id,
         id_informe: informe.value.id_informe,
         id_color: productoterminado.value.id_color,
         peso: productoterminado.value.peso,
-        tipo: productoterminado.value.tipo
-      }
+        tipo: productoterminado.value.tipo,
+      };
       store.dispatch("postProductoTerminado", info);
-      productoterminado.value.id_color = ""
-      productoterminado.value.tipo = ""
-      productoterminado.value.peso = ""
+      productoterminado.value.id_color = "";
+      productoterminado.value.tipo = "";
+      productoterminado.value.peso = "";
       location.reload();
     };
 
@@ -903,22 +951,21 @@ export default {
       }
     };
 
-  // SCRAP
+    // SCRAP
     const addscrap = () => {
-      let id = generadorID("scrap")
+      let id = generadorID("scrap");
       let info = {
         id_scrap: id,
         motivo: scrap.value.motivo,
         sacos: scrap.value.sacos,
         peso: scrap.value.peso,
-        id_informe: informe.value.id_informe
-      }
+        id_informe: informe.value.id_informe,
+      };
       store.dispatch("postScrap", info);
       scrap.value.tipo = "";
       scrap.value.sacos = "";
       scrap.value.peso = "";
       location.reload();
-      
     };
 
     const lessscrap = () => {
@@ -928,7 +975,7 @@ export default {
       }
     };
 
-//FILTRAR DE CONFIGURACION Y OBTENGO INFORMACION UNICA
+    //FILTRAR DE CONFIGURACION Y OBTENGO INFORMACION UNICA
     const filtrarMaterial = (valor) => {
       let filtro = store.state.configuracion.filter(
         (confi) => confi.id_proceso == valor
@@ -978,7 +1025,7 @@ export default {
       return unicos;
     };
 
-    //COLORES 
+    //COLORES
     const color = computed(() => {
       return store.state.color;
     });
@@ -988,11 +1035,13 @@ export default {
       return store.state.tipo_desperdicio;
     });
 
-    //CALCULOS 
+    //CALCULOS
     const totalmateriaprima = computed(() => {
       let suma = 0;
       for (let i = 0; i < store.state.materia_prima.length; i++) {
-        if(store.state.materia_prima[i].id_informe == informe.value.id_informe){
+        if (
+          store.state.materia_prima[i].id_informe == informe.value.id_informe
+        ) {
           suma += parseFloat(store.state.materia_prima[i].peso);
         }
       }
@@ -1002,7 +1051,10 @@ export default {
     const totalproductoterminado = computed(() => {
       let suma = 0;
       for (let i = 0; i < store.state.producto_terminado.length; i++) {
-        if(store.state.producto_terminado[i].id_informe == informe.value.id_informe){
+        if (
+          store.state.producto_terminado[i].id_informe ==
+          informe.value.id_informe
+        ) {
           suma += parseFloat(store.state.producto_terminado[i].peso);
         }
       }
@@ -1012,9 +1064,9 @@ export default {
     const totalscrap = computed(() => {
       let suma = 0;
       for (let i = 0; i < store.state.scrap.length; i++) {
-        if(store.state.scrap[i].id_informe == informe.value.id_informe){
+        if (store.state.scrap[i].id_informe == informe.value.id_informe) {
           suma += parseFloat(store.state.scrap[i].peso);
-        } 
+        }
       }
       return suma;
     });
@@ -1025,25 +1077,35 @@ export default {
       let scraptotal = 0;
 
       for (let i = 0; i < store.state.materia_prima.length; i++) {
-        if(store.state.materia_prima[i].id_informe == informe.value.id_informe){
+        if (
+          store.state.materia_prima[i].id_informe == informe.value.id_informe
+        ) {
           materiaprimatotal += parseFloat(store.state.materia_prima[i].peso);
         }
       }
-    
+
       for (let i = 0; i < store.state.producto_terminado.length; i++) {
-        if(store.state.producto_terminado[i].id_informe == informe.value.id_informe){
-          productoterminadototal += parseFloat(store.state.producto_terminado[i].peso);
+        if (
+          store.state.producto_terminado[i].id_informe ==
+          informe.value.id_informe
+        ) {
+          productoterminadototal += parseFloat(
+            store.state.producto_terminado[i].peso
+          );
         }
       }
 
       for (let i = 0; i < store.state.scrap.length; i++) {
-        if(store.state.scrap[i].id_informe == informe.value.id_informe){
+        if (store.state.scrap[i].id_informe == informe.value.id_informe) {
           scraptotal += parseFloat(store.state.scrap[i].peso);
-        } 
+        }
       }
 
-      let sumatotal = (materiaprimatotal + parseFloat(informe.value.saldo_anterior)) - (productoterminadototal + scraptotal);
-     
+      let sumatotal =
+        materiaprimatotal +
+        parseFloat(informe.value.saldo_anterior) -
+        (productoterminadototal + scraptotal);
+
       if (sumatotal < 0 || isNaN(sumatotal)) {
         return 0;
       } else {
@@ -1051,15 +1113,14 @@ export default {
       }
     });
 
-
     const bloquearbotonenviar = computed(() => {
       if (
         informe.value.turno == "" ||
-        informe.value.linea == "" ||
-        informe.value.proceso == "" ||
-        informe.value.material == "" ||
-        informe.value.tipo_material == "" ||
-        informe.value.color == "" 
+        informe.value.id_linea == "" ||
+        informe.value.id_proceso == "" ||
+        informe.value.id_material == "" ||
+        informe.value.id_tipo_material == "" ||
+        informe.value.id_color == ""
       ) {
         return true;
       } else {
@@ -1069,11 +1130,11 @@ export default {
 
     const bloquearproductoterminado = computed(() => {
       if (
-        informe.value.linea == "" ||
-        informe.value.proceso == "" ||
-        informe.value.material == "" ||
-        informe.value.tipo_material == "" ||
-        informe.value.color == ""
+        informe.value.id_linea == "" ||
+        informe.value.id_proceso == "" ||
+        informe.value.id_material == "" ||
+        informe.value.id_tipo_material == "" ||
+        informe.value.id_color == ""
       ) {
         return true;
       } else {
@@ -1135,12 +1196,12 @@ export default {
 
       let idInformeGBD = generadorID("informe");
 
-      if(
+      if (
         informe.value.saldo_anterior == null ||
         informe.value.saldo_anterior == undefined ||
         informe.value.saldo_anterior == ""
-      ){
-        informe.value.saldo_anterior = 0
+      ) {
+        informe.value.saldo_anterior = 0;
       }
 
       let informeAEnviar = {
@@ -1169,7 +1230,68 @@ export default {
       store.state.generado = true;
     };
 
-   
+    //AL TERMINAR EL INFORME (LO ACTUALIZA EN GBD)
+    const enviarinforme = () => {
+      let infoGBDInforme = store.state.informe.find(
+        (obj) => obj.id_informe == informe.value.id_informe
+      );
+      if (infoGBDInforme != null || infoGBDInforme != undefined) {
+        if (infoGBDInforme.completado != 1) {
+          if (
+            informe.value.saldo_anterior == "" ||
+            informe.value.saldo_anterior == null ||
+            informe.value.saldo_anterior == undefined
+          ) {
+            informe.value.saldo_anterior = 0;
+          }
+
+          let informeAEnviar = {
+            id_informe: informe.value.id_informe,
+            id: informe.value.id,
+            fecha: infoGBDInforme.fecha,
+            turno: informe.value.turno,
+            saldo_anterior: informe.value.saldo_anterior,
+            observacion: informe.value.observacion,
+            completado: 1,
+            id_proceso: informe.value.id_proceso,
+            id_material: informe.value.id_material,
+            id_tipo_material: informe.value.id_tipo_material,
+          };
+
+          store.dispatch("putInforme", informeAEnviar);
+
+          localStorage.clear();
+
+          location.reload();
+        } else {
+          localStorage.clear();
+          location.reload();
+        }
+      } else {
+        localStorage.clear();
+        location.reload();
+      }
+    };
+
+    const guardarSaldoAnterior = () => {
+      if (
+        informe.value.saldo_anterior != "" ||
+        informe.value.saldo_anterior != null ||
+        informe.value.saldo_anterior != undefined
+      ) {
+        localStorage.setItem("saldoAnterior", informe.value.saldo_anterior);
+      } else {
+        localStorage.setItem("saldoAnterior", 0);
+      }
+      store.state.presentaraviso = true;
+      store.state.mensaje = "Saldo Guardado";
+      store.state.tipoaviso = "aviso";
+    };
+
+    const refresh = () => {
+      location.reload();
+    };
+
     return {
       codigopersonal,
       materiaprima,
@@ -1201,6 +1323,7 @@ export default {
       llamarwarningmateriaprima,
       llamarwarningproductoterminado,
       llamarwarningscrap,
+      llamarwarningInforme,
       obtenerparte,
       getgenerado,
       llamarwarningadvertencia,
@@ -1214,6 +1337,9 @@ export default {
       ProductoTerminadoDelInforme,
       ScrapDelInforme,
       validarCompletado,
+      enviarinforme,
+      guardarSaldoAnterior,
+      refresh,
     };
   },
 };

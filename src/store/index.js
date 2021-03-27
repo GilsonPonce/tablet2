@@ -2,21 +2,6 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-    token: "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==",
-    urlLinea: "http://localhost:8080/linea",
-    urlProceso: "http://localhost:8080/proceso",
-    urlPropiedad: "http://localhost:8080/propiedad",
-    urlTipoMaterial: "http://localhost:8080/tipo_material",
-    urlMaterial: "http://localhost:8080/material",
-    urlConfiguracion: "http://localhost:8080/configuracion",
-    urlColor: "http://localhost:8080/color",
-    urlInforme: "http://localhost:8080/informe",
-    urlMateriaPrima: "http://localhost:8080/materia_prima",
-    urlScrap: "http://localhost:8080/scrap",
-    urlTipoDesperdicio: "http://localhost:8080/tipo_desperdicio",
-    urlProductoTerminado: "http://localhost:8080/producto_terminado",
-    urlRegistro: "http://localhost:8080/registro",
-    urlPersonal: "http://localhost:8080/personal",
     linea: [],
     proceso: [],
     propiedad: [],
@@ -118,14 +103,14 @@ export default createStore({
       try {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
-
+      
         var requestOptions = {
           method: 'GET',
           headers: myHeaders,
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/linea", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/linea", requestOptions)
         const data = await res.json()
         commit('setLinea', data.detalle)
         commit('setLoading', false)
@@ -145,7 +130,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/proceso", requestOptions)
+        const res = await fetch("http://tablet.novared.local/api/proceso", requestOptions)
         const data = await res.json()
         commit('setProceso', data.detalle)
         commit('setLoading', false)
@@ -165,7 +150,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/material", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/material", requestOptions)
         const data = await res.json()
         commit('setMaterial', data.detalle)
         commit('setLoading', false)
@@ -185,7 +170,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/tipo_material", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/tipo_material", requestOptions)
         const data = await res.json()
         commit('setTipoMaterial', data.detalle)
         commit('setLoading', false)
@@ -205,7 +190,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/propiedad", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/propiedad", requestOptions)
         const data = await res.json()
         commit('setPropiedad', data.detalle)
         commit('setLoading', false)
@@ -225,7 +210,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/color", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/color", requestOptions)
         const data = await res.json()
         commit('setColor', data.detalle)
         commit('setLoading', false)
@@ -245,7 +230,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/personal", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/personal", requestOptions)
         const data = await res.json()
         commit('setPersonal', data.detalle)
         commit('setLoading', false)
@@ -265,7 +250,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/configuracion", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/configuracion", requestOptions)
         const data = await res.json()
         commit('setConfiguracion', data.detalle)
         commit('setLoading', false)
@@ -285,7 +270,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/tipo_desperdicio", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/tipo_desperdicio", requestOptions)
         const data = await res.json()
         commit('setTipoDesperdicio', data.detalle)
         commit('setLoading', false)
@@ -305,7 +290,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/informe", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/informe", requestOptions)
         const data = await res.json()
         commit('setInforme', data.detalle)
         commit('setLoading', false)
@@ -325,7 +310,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/registro", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/registro", requestOptions)
         const data = await res.json()
         commit('setRegistro', data.detalle)
         commit('setLoading', false)
@@ -345,7 +330,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/producto_terminado", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/producto_terminado", requestOptions)
         const data = await res.json()
         commit('setProductoTerminado', data.detalle)
         commit('setLoading', false)
@@ -365,7 +350,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/materia_prima", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/materia_prima", requestOptions)
         const data = await res.json()
         commit('setMateriaPrima', data.detalle)
         commit('setLoading', false)
@@ -385,7 +370,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/scrap", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/scrap", requestOptions)
         const data = await res.json()
         commit('setScrap', data.detalle)
         commit('setLoading', false)
@@ -418,9 +403,8 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/informe", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/informe", requestOptions)
         const data = await res.json()
-        commit('mensajeaviso', data.detalle)
         commit('setLoading', false)
       } catch (error) {
         console.log(error)
@@ -447,7 +431,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/materia_prima", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/materia_prima", requestOptions)
         const data = await res.json()
         commit('mensajeaviso', data.detalle)
         commit('setLoading', false)
@@ -461,6 +445,7 @@ export default createStore({
       try {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
+        myHeaders.append("Content-Type","multipart/form-data")
 
         var formdata = new FormData();
         formdata.append("id_producto_terminado", objetoproductoterminado.id_producto_terminado);
@@ -476,7 +461,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/producto_terminado", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/producto_terminado", requestOptions)
         const data = await res.json()
         commit('mensajeaviso', data.detalle)
         commit('setLoading', false)
@@ -506,7 +491,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/scrap", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/scrap", requestOptions)
         const data = await res.json()
         commit('setLoading', false)
       } catch (error) {
@@ -532,7 +517,7 @@ export default createStore({
           redirect: 'follow'
         };
 
-        const res = await fetch("http://localhost:8080/registro", requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/registro", requestOptions)
         const data = await res.json()
         commit('setLoading', false)
       } catch (error) {
@@ -553,7 +538,7 @@ export default createStore({
         };
 
 
-        const res = await fetch("http://localhost:8080/registro/"+id, requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/registro/"+id, requestOptions)
         const data = await res.json()
         commit('setLoading', false)
       } catch (error) {
@@ -574,7 +559,7 @@ export default createStore({
         };
 
 
-        const res = await fetch("http://localhost:8080/materia_prima/"+id, requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/materia_prima/"+id, requestOptions)
         const data = await res.json()
         commit('setLoading', false)
       } catch (error) {
@@ -595,7 +580,7 @@ export default createStore({
         };
 
 
-        const res = await fetch("http://localhost:8080/producto_terminado/"+id, requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/producto_terminado/"+id, requestOptions)
         const data = await res.json()
         commit('setLoading', false)
       } catch (error) {
@@ -616,8 +601,43 @@ export default createStore({
         };
 
 
-        const res = await fetch("http://localhost:8080/scrap/"+id, requestOptions)
+        const res = await fetch("http://apiproduccion.novared.local/scrap/"+id, requestOptions)
         const data = await res.json()
+        commit('setLoading', false)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    putInforme: async function ({ commit },objetoInforme) {
+      commit('setLoading', true)
+      try {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
+        myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+        var urlencoded = new URLSearchParams();
+        urlencoded.append("id_informe", objetoInforme.id_informe);
+        urlencoded.append("id", objetoInforme.id);
+        urlencoded.append("fecha", objetoInforme.fecha);
+        urlencoded.append("turno", objetoInforme.turno);
+        urlencoded.append("saldo_anterior", objetoInforme.saldo_anterior);
+        urlencoded.append("observacion", objetoInforme.observacion);
+        urlencoded.append("completado",objetoInforme.completado);
+        urlencoded.append("id_proceso", objetoInforme.id_proceso);
+        urlencoded.append("id_material", objetoInforme.id_material);
+        urlencoded.append("id_tipo_material", objetoInforme.id_tipo_material);
+
+        var requestOptions = {
+          method: 'PUT',
+          headers: myHeaders,
+          body: urlencoded,
+          redirect: 'follow'
+        };
+
+
+        const res = await fetch("http://apiproduccion.novared.local/informe/"+objetoInforme.id_informe, requestOptions)
+        const data = await res.text()
         commit('setLoading', false)
       } catch (error) {
         console.log(error)
