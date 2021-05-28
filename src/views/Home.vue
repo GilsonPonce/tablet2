@@ -64,30 +64,43 @@
             </div>
           </div>
           <div class="row mb-3" v-if="!getgenerado">
-            <label for="selectLinea" class="col-sm-2 col-form-label"
+            <label for="sctLineaI" class="col-sm-2 col-form-label"
               >Linea:</label
             >
             <div class="col-sm-4">
-              <input
-                type="text"
-                class="form-control form-control-sm"
-                id="selectLinea"
-                name="selectLineaInforme"
-                value="Plastico"
-                disabled
-              />
+            <select
+                name="selectMaterial"
+                class="form-select form-select-sm"
+                id="selectLineaI"
+                v-model="informe.id_linea"
+              >
+                <option
+                  v-for="lineas in filtrarLinea()"
+                  :key="lineas.id_configuracion"
+                  v-bind:value="lineas.id_linea"
+                >
+                  {{ lineas.linea }}
+                </option>
+              </select>
             </div>
             <label for="selectProceso" class="col-sm-2 col-form-label"
               >Proceso:</label
             >
             <div class="col-sm-4">
-              <input
-                type="text"
-                class="form-control form-control-sm"
+             <select
+                name="selectProceso"
+                class="form-select form-select-sm"
                 id="selectProceso"
-                value="Pelletizado"
-                disabled
-              />
+                v-model="informe.id_proceso"
+              >
+                <option
+                  v-for="procesos in filtrarProceso(informe.id_linea)"
+                  :key="procesos.id_configuracion"
+                  v-bind:value="procesos.id_proceso"
+                >
+                  {{ procesos.proceso }}
+                </option>
+              </select>
             </div>
             <label for="selectMaterial" class="col-sm-2 col-form-label"
               >Material:</label
@@ -200,25 +213,40 @@
               >Linea:</label
             >
             <div class="col-sm-4">
-              <input
-                type="text"
-                class="form-control form-control-sm"
+               <select
+                name="selectMaterial"
+                class="form-select form-select-sm"
                 id="selectLinea"
-                value="Plastico"
-                disabled
-              />
+                v-model="materiaprima.id_linea"
+              >
+                <option
+                  v-for="lineas in filtrarLinea()"
+                  :key="lineas.id_configuracion"
+                  v-bind:value="lineas.id_linea"
+                >
+                  {{ lineas.linea }}
+                </option>
+              </select>
             </div>
             <label for="selectProceso" class="col-sm-2 col-form-label"
               >Proceso:</label
             >
             <div class="col-sm-4">
-              <input
-                type="text"
-                class="form-control form-control-sm"
+               <select
+                name="selectProceso"
+                class="form-select form-select-sm"
                 id="selectProceso"
-                value="Pelletizado"
-                disabled
-              />
+                v-model="materiaprima.id_proceso"
+                :disabled="materiaprima.id_linea = ''"
+              >
+                <option
+                  v-for="procesos in filtrarProceso(materiaprima.id_linea)"
+                  :key="procesos.id_configuracion"
+                  v-bind:value="procesos.id_proceso"
+                >
+                  {{ procesos.proceso }}
+                </option>
+              </select>
             </div>
             <label for="selectMaterial" class="col-sm-2 col-form-label"
               >Material:</label
@@ -1025,6 +1053,37 @@ export default {
       return unicos;
     };
 
+    const filtrarLinea = () => {
+
+      let config = store.state.configuracion.map((item) => {
+        return [item.id_propiedad, item];
+      });
+
+      let configu = new Map(config);
+
+      let unicos = [...configu.values()];
+
+      return unicos;
+    };
+
+    const filtrarProceso = (valor1) => {
+
+      let filtro = store.state.configuracion.filter(
+        (confi) =>
+          confi.id_linea == valor1 
+      );
+
+      let config = filtro.map((item) => {
+        return [item.id_propiedad, item];
+      });
+
+      let configu = new Map(config);
+
+      let unicos = [...configu.values()];
+
+      return unicos;
+    };
+
     //COLORES
     const color = computed(() => {
       return store.state.color;
@@ -1302,6 +1361,8 @@ export default {
       lesspersonal,
       filtrarMaterial,
       filtrarTipoMaterial,
+      filtrarProceso,
+      filtrarLinea,
       color,
       filtrarPropiedad,
       addmateriaprima,

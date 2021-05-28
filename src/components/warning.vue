@@ -95,8 +95,8 @@ export default {
   background: white;
   border-radius: 10px;
   padding: 20px;
-  width: 255px;
-  height: 320px;
+  width: auto;
+  height: auto;
   margin: 20px auto;
   position: relative;
   top: 18%;
