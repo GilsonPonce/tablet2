@@ -418,7 +418,7 @@ export default createStore({
         myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
 
         var formdata = new FormData();
-        formdata.append("id_materia_prima",objetomateriaprima.id_materia_prima);
+
         formdata.append("id_configuracion",objetomateriaprima.id_configuracion);
         formdata.append("id_color",objetomateriaprima.id_color);
         formdata.append("id_informe",objetomateriaprima.id_informe);
@@ -445,10 +445,8 @@ export default createStore({
       try {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
-        myHeaders.append("Content-Type","multipart/form-data")
 
         var formdata = new FormData();
-        formdata.append("id_producto_terminado", objetoproductoterminado.id_producto_terminado);
         formdata.append("id_informe", objetoproductoterminado.id_informe);
         formdata.append("peso", objetoproductoterminado.peso);
         formdata.append("id_color", objetoproductoterminado.id_color);
@@ -462,7 +460,8 @@ export default createStore({
         };
 
         const res = await fetch("http://tablet.novared.local/api/producto_terminado", requestOptions)
-        const data = await res.json()
+        const data = await res.text()
+        console.log(data)
         commit('mensajeaviso', data.detalle)
         commit('setLoading', false)
       } catch (error) {
@@ -478,7 +477,6 @@ export default createStore({
 
 
         var formdata = new FormData();
-        formdata.append("id_scrap", objetoscrap.id_scrap);
         formdata.append("motivo", objetoscrap.motivo);
         formdata.append("sacos", objetoscrap.sacos);
         formdata.append("peso", objetoscrap.peso);
@@ -492,7 +490,8 @@ export default createStore({
         };
 
         const res = await fetch("http://tablet.novared.local/api/scrap", requestOptions)
-        const data = await res.json()
+        const data = await res.text()
+        console.log(data)
         commit('setLoading', false)
       } catch (error) {
         console.log(error)
@@ -506,7 +505,6 @@ export default createStore({
         myHeaders.append("Authorization", "Basic YTJhYTA3YWFmYXJ0d2V0c2RBRDUyMzU2RkVER2VGOHpNSTlYQUtGQWNLVG9SWFBUcVRjSElTNVVvRWRlOm8yYW8wN29hZmFydHdldHNkQUQ1MjM1NkZFREdlcTlGeDYxRUdyZlo5LnJvSUxVZnNtMmFaRjhGQ3RwTw==");
 
         var formdata = new FormData();
-        formdata.append("id_registro", objetoregistro.id_registro);
         formdata.append("id_personal", objetoregistro.id_personal);
         formdata.append("id_informe", objetoregistro.id_informe);
 
@@ -518,7 +516,8 @@ export default createStore({
         };
 
         const res = await fetch("http://tablet.novared.local/api/registro", requestOptions)
-        const data = await res.json()
+        const data = await res.text()
+        console.log(data)
         commit('setLoading', false)
       } catch (error) {
         console.log(error)
@@ -638,6 +637,7 @@ export default createStore({
 
         const res = await fetch("http://tablet.novared.local/api/informe/"+objetoInforme.id_informe, requestOptions)
         const data = await res.text()
+        console.log(data)
         commit('setLoading', false)
       } catch (error) {
         console.log(error)

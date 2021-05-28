@@ -612,7 +612,8 @@ export default {
   setup() {
     const store = useStore();
 
-    store.dispatch("getPersonal");
+    onMounted(async()=>{
+      store.dispatch("getPersonal");
     store.dispatch("getRegistro");
     store.dispatch("getConfiguracion");
     store.dispatch("getColor");
@@ -625,6 +626,7 @@ export default {
     store.dispatch("getMateriaPrima");
     store.dispatch("getProductoTerminado");
     store.dispatch("getScrap");
+    });
 
     const codigopersonal = ref("");
     const materiaprima = ref({
@@ -704,7 +706,7 @@ export default {
 
     const PersonalDelInforme = computed(() => {
       if (store.state.generado) {
-        return store.state.registro.filter((obj) => {
+        return store.state.registro.filter(function(obj){
           if (obj.id_informe == informe.value.id_informe && obj.activo == 1) {
             return obj;
           }
@@ -764,9 +766,7 @@ export default {
 
         if (idpersonexistente == undefined || idpersonexistente == null) {
           if (person != undefined || person != null) {
-            let idRegistro = generadorID("registro");
             let inforegistro = {
-              id_registro: idRegistro,
               id_informe: informe.value.id_informe,
               id_personal: person.id_personal,
             };
@@ -930,9 +930,7 @@ export default {
       });
 
       if (idConfiguracion != null || idConfiguracion != undefined) {
-        let id = generadorID("materiaPrima");
         let info = {
-          id_materia_prima: id,
           id_configuracion: idConfiguracion.id_configuracion,
           id_color: materiaprima.value.id_color,
           id_informe: informe.value.id_informe,
@@ -957,9 +955,7 @@ export default {
 
     //PRODUCTO TERMINADO
     const addproductoterminado = () => {
-      let id = generadorID("productoTerminado");
       let info = {
-        id_producto_terminado: id,
         id_informe: informe.value.id_informe,
         id_color: productoterminado.value.id_color,
         peso: productoterminado.value.peso,
@@ -981,9 +977,7 @@ export default {
 
     // SCRAP
     const addscrap = () => {
-      let id = generadorID("scrap");
       let info = {
-        id_scrap: id,
         motivo: scrap.value.motivo,
         sacos: scrap.value.sacos,
         peso: scrap.value.peso,
